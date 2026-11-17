@@ -1,0 +1,298 @@
+{
+  "events": [
+    {
+      "id": "bulan-bahasa",
+      "name": "Bulan Bahasa",
+      "subtitle": "Sastra, Retorika & Literasi Sekolah",
+      "description": "Ajang ekspresi seni sastra, bahasa Indonesia, dan kreativitas literasi bagi seluruh siswa sekolah.",
+      "locked": false,
+      "registrationDeadline": "2026-12-20T07:30",
+      "eventDate": "2026-12-21T08:00",
+      "competitions": [
+        {
+          "id": "bb-puisi",
+          "name": "Baca Puisi Kebangsaan",
+          "category": "Individu",
+          "isGroup": false,
+          "minMembers": 1,
+          "locked": false,
+          "juknis": "1. Peserta merupakan siswa aktif sekolah (1 siswa hanya dapat mengikuti 1 lomba pada event Bulan Bahasa).\n2. Membawakan 1 puisi wajib ('Aku' - Chairil Anwar) dan 1 puisi pilihan bertema perjuangan/kebangsaan.\n3. Durasi tampil maksimal 7 menit di panggung utama.\n4. Busana rapi, sopan, dan bernuansa batik atau seragam sekolah.\n5. Aspek penilaian: Penghayatan (35%), Intonasi & Vokal (30%), Artikulasi (20%), Ekspresi & Gestur (15%).",
+          "bracket": {
+            "rounds": [
+              {
+                "name": "Semifinal",
+                "matches": [
+                  {
+                    "id": "bb-sf-1",
+                    "p1": "Nadia Putri (XI-A)",
+                    "p2": "Raka Pratama (X-B)",
+                    "winner": "Nadia Putri (XI-A)"
+                  },
+                  {
+                    "id": "bb-sf-2",
+                    "p1": "Siti Rahma (XII-IPA 1)",
+                    "p2": "Dimas Wijaya (XI-IPS 2)",
+                    "winner": ""
+                  }
+                ]
+              },
+              {
+                "name": "Grand Final",
+                "matches": [
+                  {
+                    "id": "bb-gf-1",
+                    "p1": "Nadia Putri (XI-A)",
+                    "p2": "Menunggu Pemenang SF 2",
+                    "winner": ""
+                  }
+                ]
+              }
+            ],
+            "champion": ""
+          }
+        },
+        {
+          "id": "bb-pidato",
+          "name": "Pidato Bahasa Indonesia",
+          "category": "Individu",
+          "isGroup": false,
+          "minMembers": 1,
+          "locked": false,
+          "juknis": "1. Tema pidato: 'Generasi Muda Penjaga Bahasa dan Budaya Bangsa'.\n2. Durasi penyampaian 5 - 7 menit.\n3. Diperbolehkan membawa catatan poin kecil (cue card), dilarang membaca teks penuh.\n4. Kriteria penilaian: Kesesuaian Tema, Sistematika Isi, Retorika, dan Ketepatan Waktu.",
+          "bracket": {
+            "rounds": [],
+            "champion": ""
+          }
+        },
+        {
+          "id": "bb-cerpen",
+          "name": "Cipta Cerpen Remaja",
+          "category": "Individu",
+          "isGroup": false,
+          "minMembers": 1,
+          "locked": false,
+          "juknis": "1. Karya bersifat orisinal, belum pernah dipublikasikan, dan tidak menggunakan AI generatif.\n2. Panjang naskah 1.000 - 2.500 kata.\n3. Diketik rapi pada kertas A4, font Times New Roman ukuran 12, spasi 1.5.\n4. Pengumpulan naskah dilakukan pada hari pelaksanaan lomba.",
+          "bracket": {
+            "rounds": [],
+            "champion": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "porak",
+      "name": "PORAK",
+      "subtitle": "Pekan Olahraga Antar Kelas",
+      "description": "Kompetisi olahraga tahunan antar kelas untuk mempererat solidaritas dan menjunjung tinggi sportivitas.",
+      "locked": false,
+      "registrationDeadline": "2026-12-26T16:00",
+      "eventDate": "2026-12-28T07:30",
+      "competitions": [
+        {
+          "id": "porak-futsal",
+          "name": "Turnamen Futsal Antar Kelas",
+          "category": "Kelompok",
+          "isGroup": true,
+          "minMembers": 5,
+          "maxMembers": 8,
+          "locked": false,
+          "juknis": "1. Perwakilan didaftarkan oleh 1 kapten tim (cantumkan anggota tim di kolom catatan).\n2. Setiap tim terdiri dari 5 pemain inti dan maksimal 3 pemain cadangan dari kelas yang sama.\n3. Durasi pertandingan 2 x 12 menit waktu kotor.\n4. Wajib memakai sepatu futsal, kaos seragam kelas, dan pelindung tulang kering (shin guard).\n5. Keputusan wasit dan panitia bersifat mutlak.",
+          "bracket": {
+            "rounds": [
+              {
+                "name": "Semifinal",
+                "matches": [
+                  {
+                    "id": "prk-sf-1",
+                    "p1": "Tim XII MIPA 1",
+                    "p2": "Tim XI IPS 3",
+                    "winner": "Tim XII MIPA 1"
+                  },
+                  {
+                    "id": "prk-sf-2",
+                    "p1": "Tim X-4",
+                    "p2": "Tim XII IPS 2",
+                    "winner": ""
+                  }
+                ]
+              },
+              {
+                "name": "Grand Final",
+                "matches": [
+                  {
+                    "id": "prk-gf-1",
+                    "p1": "Tim XII MIPA 1",
+                    "p2": "Menunggu Pemenang SF 2",
+                    "winner": ""
+                  }
+                ]
+              }
+            ],
+            "champion": ""
+          }
+        },
+        {
+          "id": "porak-voli",
+          "name": "Bola Voli Campuran",
+          "category": "Kelompok",
+          "isGroup": true,
+          "minMembers": 6,
+          "maxMembers": 10,
+          "locked": false,
+          "juknis": "1. Komposisi tim di lapangan terdiri dari 4 siswa putra dan 2 siswa putri.\n2. Menggunakan sistem rally point 25 poin (Best of 3 sets).\n3. Tim yang terlambat lebih dari 10 menit dari jadwal dinyatakan WO.",
+          "bracket": {
+            "rounds": [],
+            "champion": ""
+          }
+        },
+        {
+          "id": "porak-badminton",
+          "name": "Bulu Tangkis Tunggal Putra/Putri",
+          "category": "Individu",
+          "isGroup": false,
+          "minMembers": 1,
+          "locked": false,
+          "juknis": "1. Menggunakan sistem gugur dengan skor rally point 21 (Best of 3).\n2. Peserta wajib membawa raket sendiri; shuttlecock disediakan oleh panitia.\n3. Mengenakan pakaian olahraga sekolah yang sopan.",
+          "bracket": {
+            "rounds": [],
+            "champion": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "17-agustus",
+      "name": "17 Agustus",
+      "subtitle": "Semarak Kemerdekaan RI",
+      "description": "Rangkaian lomba tradisional dan kreasi kemerdekaan untuk merayakan HUT RI bersama seluruh warga sekolah.",
+      "locked": false,
+      "registrationDeadline": "2027-08-15T15:00",
+      "eventDate": "2027-08-17T08:00",
+      "competitions": [
+        {
+          "id": "agust-tarik-tambang",
+          "name": "Tarik Tambang Semarak",
+          "category": "Kelompok",
+          "isGroup": true,
+          "minMembers": 8,
+          "maxMembers": 10,
+          "locked": false,
+          "juknis": "1. Setiap kelas mengirimkan 1 tim beranggotakan 8 siswa (5 putra, 3 putri).\n2. Pertandingan menggunakan sistem best of 3 tarikan.\n3. Dilarang melilitkan tali ke pinggang atau tangan demi keselamatan bersama.",
+          "bracket": {
+            "rounds": [],
+            "champion": ""
+          }
+        },
+        {
+          "id": "agust-balap-karung",
+          "name": "Balap Karung Helm Estafet",
+          "category": "Kelompok",
+          "isGroup": true,
+          "minMembers": 4,
+          "maxMembers": 4,
+          "locked": false,
+          "juknis": "1. Lomba bersifat estafet 4 orang dengan jarak lintasan 20 meter.\n2. Setiap peserta wajib menggunakan helm keselamatan dan karung yang disediakan panitia.\n3. Pelari berikutnya baru boleh melompat setelah pelari sebelumnya melewati garis serah.",
+          "bracket": {
+            "rounds": [],
+            "champion": ""
+          }
+        },
+        {
+          "id": "agust-dekor-kelas",
+          "name": "Kebersihan & Dekorasi Kelas Merdeka",
+          "category": "Per Kelas",
+          "isGroup": false,
+          "minMembers": 1,
+          "locked": false,
+          "juknis": "1. Seluruh kelas menghias ruang kelas bertema Kemerdekaan dengan bahan ramah lingkungan/daur ulang.\n2. Penilaian dilakukan oleh dewan juri pada tanggal 16 Agustus pukul 10.00 WIB.\n3. Aspek penilaian: Kreativitas, Kerapian, Kebersihan, dan Kesesuaian Tema.",
+          "bracket": {
+            "rounds": [],
+            "champion": ""
+          }
+        }
+      ]
+    }
+  ],
+  "participants": [
+    {
+      "id": "AYO-BB-4978",
+      "password": "6FWX3L",
+      "nama": "ABCD",
+      "kelas": "XI-F2",
+      "kontak": "0812",
+      "eventId": "bulan-bahasa",
+      "eventName": "Bulan Bahasa",
+      "competitionId": "bb-puisi",
+      "competitionName": "Baca Puisi Kebangsaan",
+      "catatan": "-",
+      "registeredAt": "2026-11-15 17:21:12",
+      "status": "Terdaftar"
+    },
+    {
+      "id": "AYO-BB-4949",
+      "password": "S8VJNK",
+      "nama": "Zephyr",
+      "kelas": "XI-F2",
+      "kontak": "08122",
+      "eventId": "bulan-bahasa",
+      "eventName": "Bulan Bahasa",
+      "competitionId": "bb-puisi",
+      "competitionName": "Baca Puisi Kebangsaan",
+      "catatan": "-",
+      "registeredAt": "2026-11-15 17:38:04",
+      "status": "Terdaftar"
+    },
+    {
+      "id": "AYO-PRK-5080",
+      "password": "PAEFCU",
+      "nama": "Test Kapten",
+      "kelas": "XII-MIPA 1",
+      "kontak": "-",
+      "eventId": "porak",
+      "eventName": "PORAK",
+      "competitionId": "porak-futsal",
+      "competitionName": "Turnamen Futsal Antar Kelas",
+      "catatan": "-",
+      "registeredAt": "2026-11-15 19:25:08",
+      "status": "Terdaftar"
+    },
+    {
+      "id": "AYO-BB-8378",
+      "password": "654MNR",
+      "nama": "Zephyr",
+      "kelas": "1111",
+      "kontak": "1111",
+      "eventId": "bulan-bahasa",
+      "eventName": "Bulan Bahasa",
+      "competitionId": "bb-puisi",
+      "competitionName": "Baca Puisi Kebangsaan",
+      "isGroup": false,
+      "namaKelompok": "",
+      "anggotaList": [],
+      "totalPendaftar": 1,
+      "catatan": "-",
+      "registeredAt": "2026-11-17 16:38:35",
+      "status": "Terdaftar"
+    }
+  ],
+  "panitia": [
+    {
+      "id": "panitia",
+      "name": "Panitia Utama",
+      "password": "panitia",
+      "role": "Super Admin"
+    },
+    {
+      "id": "PNT-AYO-7492",
+      "name": "Ketua Panitia Utama",
+      "password": "panitia7492!",
+      "role": "Koordinator Utama"
+    },
+    {
+      "id": "PNT-OSIS-3815",
+      "name": "Sekretaris & Sie Lomba",
+      "password": "osis3815!",
+      "role": "Admin Pendaftaran"
+    }
+  ]
+}
