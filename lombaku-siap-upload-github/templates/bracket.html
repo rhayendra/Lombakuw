@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Match Bracket — Lombaku{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-eyebrow">INTERACTIVE TOURNAMENT BRACKET</div>
+    <h1 class="page-title">Bagan & Hasil Pertandingan</h1>
+    <p class="page-subtitle">Pantau perkembangan pertandingan mulai dari babak penyisihan, semifinal, hingga final secara langsung.</p>
+  </div>
+  {% if is_admin %}
+    <a href="{{ url_for('admin.bracket_control', competition_id=selected_comp_id) }}" class="btn-glass btn-primary">Kelola Bracket (Admin)</a>
+  {% endif %}
+</div>
+
+<div id="bracketApp" data-admin-mode="false" data-competition-id="{{ selected_comp_id or 0 }}">
+  <!-- Toolbar -->
+  <div class="glass-panel bracket-toolbar">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;flex:1;">
+      <label for="bracketCompSelect" class="form-label" style="white-space:nowrap;">Pilih Cabang:</label>
+      <select id="bracketCompSelect" class="glass-select" style="max-width:360px;">
+        {% for c in competitions %}
+          <option value="{{ c.id }}" {% if c.id == selected_comp_id %}selected{% endif %}>
+            {{ c.event_name }} — {{ c.name }} ({{ c.registered_count }} peserta)
+          </option>
+        {% endfor %}
+      </select>
+      <span id="bracketLockBadge" class="status-badge status-open"><span class="status-dot"></span> Aktif</span>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <button type="button" id="btnBracketMobileMode" class="btn-glass btn-sm" style="display:inline-flex;">Mode: Per Babak</button>
+      <button type="button" id="btnBracketZoomOut" class="btn-glass btn-sm" title="Perkecil">−</button>
+      <button type="button" id="btnBracketZoomReset" class="btn-glass btn-sm" title="Reset Zoom">100%</button>
+      <button type="button" id="btnBracketZoomIn" class="btn-glass btn-sm" title="Perbesar">+</button>
+    </div>
+  </div>
+
+  <!-- Champion Spotlight -->
+  <div id="bracketChampionBanner"></div>
+
+  <!-- Mobile Round Tabs -->
+  <div id="mobileRoundTabs" class="mobile-round-tabs"></div>
+
+  <!-- Bracket Viewport -->
+  <div id="bracketViewport" class="glass-panel bracket-viewport">
+    <div id="bracketCanvas" class="bracket-canvas"></div>
+  </div>
+</div>
+
+<script id="initialBracketData" type="application/json">{{ bracket | tojson if bracket else 'null' }}</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/bracket.js') }}"></script>
+{% endblock %}

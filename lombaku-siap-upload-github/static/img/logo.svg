@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <defs>
+    <linearGradient id="lg1" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#EBF6FF"/>
+      <stop offset="50%" stop-color="#38D6FF"/>
+      <stop offset="100%" stop-color="#2F8CFF"/>
+    </linearGradient>
+    <linearGradient id="lgOrange" x1="25" y1="14" x2="34" y2="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFB020"/>
+      <stop offset="100%" stop-color="#FF7A1A"/>
+    </linearGradient>
+    <linearGradient id="lgBg" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="rgba(59,158,255,0.34)"/>
+      <stop offset="100%" stop-color="rgba(139,108,255,0.16)"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="36" height="36" rx="11" fill="url(#lgBg)" stroke="rgba(164,212,255,0.42)" stroke-width="1.2"/>
+  <path d="M10 12H16V20H22" stroke="url(#lg1)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10 28H16V20" stroke="url(#lg1)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M22 20H26.5" stroke="url(#lg1)" stroke-width="2.3" stroke-linecap="round"/>
+  <polygon points="29.5,14.5 33.5,20 29.5,25.5 25.5,20" fill="url(#lgOrange)"/>
+  <circle cx="10" cy="12" r="2.1" fill="#F7FAFF"/>
+  <circle cx="10" cy="28" r="2.1" fill="#F7FAFF"/>
+</svg>

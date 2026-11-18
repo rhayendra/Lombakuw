@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}{{ event.name }} — Lombaku{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-eyebrow">DETAIL EVENT PERLOMBAAN</div>
+    <h1 class="page-title">{{ event.name }}</h1>
+    <p class="page-subtitle">{{ event.subtitle }}</p>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <span class="status-badge status-{{ event.effective_status|lower }}"><span class="status-dot"></span> {{ event.effective_status }}</span>
+    {% if event.can_register %}
+      <a href="{{ url_for('public.register_page', event_id=event.id) }}" class="btn-glass btn-primary">Daftar Event Ini</a>
+    {% endif %}
+    <a href="{{ url_for('public.events_page') }}" class="btn-glass">← Semua Event</a>
+  </div>
+</div>
+
+<!-- Event Overview Grid -->
+<div class="grid-2" style="margin-bottom:22px;">
+  <div class="glass-panel card-pad">
+    <h3 style="margin:0 0 10px;font-size:1.05rem;">Tentang Event & Jadwal</h3>
+    <p style="margin:0 0 14px;color:var(--text-secondary);font-size:0.9rem;">{{ event.description }}</p>
+    <div class="event-chip-row" style="margin-bottom:16px;">
+      <span class="glass-chip">Pelaksanaan: {{ event.event_date_label }}</span>
+      <span class="glass-chip">Batas Daftar: {{ event.deadline_label }}</span>
+      <span class="glass-chip">{{ event.participant_count }} Pendaftar</span>
+    </div>
+    <div class="juknis-box">{{ event.schedule_text or 'Jadwal detail akan segera diumumkan panitia.' }}</div>
+  </div>
+
+  <div class="glass-panel card-pad">
+    <h3 style="margin:0 0 10px;font-size:1.05rem;">Petunjuk Teknis Umum (Juknis)</h3>
+    <div class="juknis-box" style="margin-bottom:16px;">{{ event.juknis or 'Mengikuti ketentuan umum perlombaan sekolah.' }}</div>
+    <div class="glass-sub card-pad-sm">
+      <div style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:4px;">Informasi Panitia</div>
+      <div style="font-size:0.86rem;color:var(--text-secondary);">{{ event.committee_info or school_settings.committee_contact }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Cabang Lomba List -->
+<div class="page-header" style="margin-top:14px;margin-bottom:16px;">
+  <div>
+    <div class="page-eyebrow">DAFTAR CABANG</div>
+    <h2 style="margin:0;font-size:1.45rem;">Cabang Lomba di {{ event.name }}</h2>
+  </div>
+</div>
+
+<div class="grid-2">
+  {% for c in competitions %}
+  <div class="glass-panel glass-hover card-pad" style="display:flex;flex-direction:column;justify-content:space-between;gap:14px;">
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+        <div>
+          <span style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);">{{ c.category }}</span>
+          <h3 style="margin:3px 0 0;font-size:1.2rem;">{{ c.name }}</h3>
+        </div>
+        <span class="status-badge {{ 'status-registered' if c.comp_type == 'INDIVIDUAL' else 'status-live' }}">
+          {{ 'Individu' if c.comp_type == 'INDIVIDUAL' else 'Tim ' ~ c.min_members ~ '–' ~ c.max_members ~ ' Org' }}
+        </span>
+      </div>
+
+      <p style="color:var(--text-secondary);font-size:0.87rem;margin:10px 0 12px;">{{ c.description }}</p>
+
+      <div class="event-chip-row">
+        <span class="glass-chip">Peserta: {{ c.registered_count }} / {{ c.max_slots }}</span>
+        {% if c.schedule_info %}<span class="glass-chip">{{ c.schedule_info }}</span>{% endif %}
+        {% if c.venue %}<span class="glass-chip">{{ c.venue }}</span>{% endif %}
+        {% if c.comp_type == 'TEAM' and c.same_class_required %}
+          <span class="glass-chip" style="color:#fde68a;border-color:rgba(245,181,68,0.38);">Wajib 1 Kelas</span>
+        {% endif %}
+      </div>
+
+      {% if c.juknis %}
+      <details style="margin-top:14px;">
+        <summary style="cursor:pointer;font-size:0.83rem;font-weight:600;color:var(--accent-cyan);">Baca Juknis & Kisi-kisi Cabang</summary>
+        <div class="juknis-box" style="margin-top:10px;font-size:0.83rem;">{{ c.juknis }}</div>
+      </details>
+      {% endif %}
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+      {% if event.can_register %}
+        <a href="{{ url_for('public.register_page', event_id=event.id, competition_id=c.id) }}" class="btn-glass btn-primary btn-sm" style="flex:1;">Daftar Cabang Ini</a>
+      {% else %}
+        <span class="btn-glass btn-sm is-disabled" style="flex:1;">Pendaftaran {{ event.effective_status }}</span>
+      {% endif %}
+      <a href="{{ url_for('public.bracket_page', competition_id=c.id) }}" class="btn-glass btn-sm" style="flex:1;">
+        Lihat Bracket {% if c.live_count > 0 %}(● LIVE){% endif %}
+      </a>
+    </div>
+  </div>
+  {% else %}
+  <div class="glass-panel card-pad">Belum ada cabang lomba pada event ini.</div>
+  {% endfor %}
+</div>
+{% endblock %}

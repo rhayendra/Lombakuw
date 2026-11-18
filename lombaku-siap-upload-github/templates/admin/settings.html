@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Pengaturan — Admin Lombaku{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-eyebrow">KONFIGURASI SISTEM</div>
+    <h1 class="page-title">Settings Panitia</h1>
+    <p class="page-subtitle">Atur identitas sekolah, pengumuman beranda, ubah password akun admin, atau pulihkan data demo presentasi.</p>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- School Settings -->
+  <div class="glass-panel card-pad">
+    <h2 style="margin:0 0 14px;font-size:1.15rem;">Identitas Sekolah & Pengumuman</h2>
+    <form method="POST" action="{{ url_for('admin.settings_page') }}" style="display:flex;flex-direction:column;gap:14px;">
+      <input type="hidden" name="action" value="update_settings">
+      <div class="form-group">
+        <label class="form-label">Nama Sekolah</label>
+        <input type="text" name="school_name" class="glass-input" value="{{ settings.school_name }}" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tagline Platform</label>
+        <input type="text" name="school_tagline" class="glass-input" value="{{ settings.school_tagline }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kontak Sekretariat Panitia</label>
+        <input type="text" name="committee_contact" class="glass-input" value="{{ settings.committee_contact }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pengumuman Beranda</label>
+        <textarea name="announcement" class="glass-textarea">{{ settings.announcement }}</textarea>
+      </div>
+      <div>
+        <button type="submit" class="btn-glass btn-primary">Simpan Pengaturan</button>
+      </div>
+    </form>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px;">
+    <!-- Change Password -->
+    <div class="glass-panel card-pad">
+      <h2 style="margin:0 0 14px;font-size:1.15rem;">Keamanan Akun Panitia</h2>
+      <form method="POST" action="{{ url_for('admin.settings_page') }}" style="display:flex;flex-direction:column;gap:12px;">
+        <input type="hidden" name="action" value="change_password">
+        <div class="form-group">
+          <label class="form-label">Password Lama</label>
+          <input type="password" name="old_password" class="glass-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password Baru (min. 6 karakter)</label>
+          <input type="password" name="new_password" class="glass-input" minlength="6" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Konfirmasi Password Baru</label>
+          <input type="password" name="confirm_password" class="glass-input" minlength="6" required>
+        </div>
+        <div>
+          <button type="submit" class="btn-glass btn-primary">Ubah Password</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Reset Demo Data -->
+    <div class="glass-panel card-pad">
+      <h2 style="margin:0 0 8px;font-size:1.15rem;">Pulihkan Data Demo Presentasi</h2>
+      <p style="margin:0 0 14px;font-size:0.86rem;color:var(--text-secondary);">
+        Mengembalikan 3 event default (Bulan Bahasa, PORAK, 17 Agustus), cabang lomba, peserta demo, dan contoh bracket ke kondisi awal yang bersih untuk presentasi.
+      </p>
+      <form method="POST" action="{{ url_for('admin.settings_page') }}" onsubmit="return confirm('Reset seluruh data event, peserta, dan bracket ke data demo awal?');">
+        <input type="hidden" name="action" value="reset_demo">
+        <button type="submit" class="btn-glass btn-danger">Reset Data Demo</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
