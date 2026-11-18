@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Login Panitia — Lombaku{% endblock %}
+
+{% block content %}
+<div style="max-width:440px;margin:40px auto;">
+  <div class="glass-panel card-pad">
+    <div style="text-align:center;margin-bottom:22px;">
+      <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Lombaku" style="width:52px;height:52px;margin-bottom:10px;">
+      <div class="page-eyebrow">AKSES KHUSUS PANITIA</div>
+      <h1 style="margin:0;font-size:1.55rem;">Login Admin Lombaku</h1>
+      <p style="margin:6px 0 0;font-size:0.86rem;color:var(--text-secondary);">Kelola event, cabang lomba, peserta, bracket pertandingan, dan ekspor Excel.</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('admin.login', next=request.args.get('next')) }}" style="display:flex;flex-direction:column;gap:14px;">
+      <div class="form-group">
+        <label class="form-label" for="adminUsername">Username Panitia</label>
+        <input type="text" id="adminUsername" name="username" class="glass-input" placeholder="admin" required autofocus>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="adminPassword">Password</label>
+        <input type="password" id="adminPassword" name="password" class="glass-input" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn-glass btn-primary" style="width:100%;margin-top:6px;">Masuk Dashboard Panitia</button>
+    </form>
+
+    <div class="glass-sub card-pad-sm" style="margin-top:18px;font-size:0.78rem;color:var(--text-muted);text-align:center;">
+      Akun Demo Presentasi: <strong style="color:var(--text-primary);">admin</strong> / <strong style="color:var(--text-primary);">admin123</strong>
+      <br>Password disimpan terenkripsi menggunakan hash Werkzeug.
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Match Bracket — Lombaku{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-eyebrow">INTERACTIVE TOURNAMENT BRACKET (JINJA2)</div>
+    <h1 class="page-title">Bagan & Hasil Pertandingan</h1>
+    <p class="page-subtitle">Pantau perkembangan pertandingan mulai dari babak penyisihan, semifinal, hingga final secara langsung.</p>
+  </div>
+  {% if is_admin %}
+    <a href="{{ url_for('admin.bracket_control', competition_id=selected_comp_id) }}" class="btn-glass btn-primary">Kelola Bracket (Admin)</a>
+  {% endif %}
+</div>
+
+<!-- Toolbar -->
+<div class="glass-panel bracket-toolbar">
+  <form method="GET" action="{{ url_for('public.bracket_page') }}" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;">
+    <label for="bracketCompSelect" class="form-label" style="white-space:nowrap;">Pilih Cabang:</label>
+    <select id="bracketCompSelect" name="competition_id" class="glass-select" style="max-width:360px;" onchange="this.form.submit();">
+      {% for c in competitions %}
+        <option value="{{ c.id }}" {% if c.id == selected_comp_id %}selected{% endif %}>
+          {{ c.event_name }} — {{ c.name }} ({{ c.registered_count }} peserta)
+        </option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn-glass btn-sm">Tampilkan</button>
+    {% if bracket %}
+      <span class="status-badge {{ 'status-locked' if bracket.bracket_locked else 'status-open' }}">
+        <span class="status-dot"></span> {{ 'Terkunci' if bracket.bracket_locked else 'Aktif' }}
+      </span>
+    {% endif %}
+  </form>
+
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+    {% set next_view = 'full' if view_mode == 'tabs' else 'tabs' %}
+    <a href="{{ url_for('public.bracket_page', competition_id=selected_comp_id, round=active_round, view=next_view) }}" class="btn-glass btn-sm">
+      Mode: {{ 'Per Babak' if view_mode == 'tabs' else 'Geser Penuh' }}
+    </a>
+    <button type="button" data-zoom="out" class="btn-glass btn-sm" title="Perkecil">−</button>
+    <button type="button" data-zoom="reset" class="btn-glass btn-sm" title="Reset Zoom">100%</button>
+    <button type="button" data-zoom="in" class="btn-glass btn-sm" title="Perbesar">+</button>
+  </div>
+</div>
+
+{% include "_bracket_tree.html" %}
+{% endblock %}

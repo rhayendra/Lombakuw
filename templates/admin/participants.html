@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Manajemen Peserta — Lombaku{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-eyebrow">DATA PENDAFTAR INDIVIDU & TIM</div>
+    <h1 class="page-title">Participants Management</h1>
+    <p class="page-subtitle">Verifikasi pendaftaran siswa, ubah status peserta (Registered, Pending, Accepted, Rejected), dan lihat detail anggota tim.</p>
+  </div>
+  <a href="{{ url_for('admin.export_download', event_id=filters.event_id, competition_id=filters.competition_id) }}" class="btn-glass btn-primary">Ekspor Hasil Filter (.xlsx)</a>
+</div>
+
+<!-- Filter Bar -->
+<form method="GET" action="{{ url_for('admin.participants') }}" class="glass-panel card-pad-sm" style="margin-bottom:18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+  <input type="text" name="search" value="{{ filters.search }}" class="glass-input" placeholder="Cari nama, tim, NIS, kelas, kode..." style="flex:1.4;min-width:200px;">
+
+  <select name="event_id" class="glass-select" style="flex:1;min-width:160px;">
+    <option value="">Semua Event</option>
+    {% for ev in events %}
+      <option value="{{ ev.id }}" {% if filters.event_id == ev.id %}selected{% endif %}>{{ ev.name }}</option>
+    {% endfor %}
+  </select>
+
+  <select name="competition_id" class="glass-select" style="flex:1;min-width:180px;">
+    <option value="">Semua Cabang</option>
+    {% for c in competitions %}
+      <option value="{{ c.id }}" {% if filters.competition_id == c.id %}selected{% endif %}>{{ c.event_name }} — {{ c.name }}</option>
+    {% endfor %}
+  </select>
+
+  <select name="status" class="glass-select" style="flex:0.8;min-width:140px;">
+    <option value="">Semua Status</option>
+    {% for st in ['Registered', 'Pending', 'Accepted', 'Rejected'] %}
+      <option value="{{ st }}" {% if filters.status == st %}selected{% endif %}>{{ st }}</option>
+    {% endfor %}
+  </select>
+
+  <button type="submit" class="btn-glass btn-primary btn-sm">Terapkan Filter</button>
+  <a href="{{ url_for('admin.participants') }}" class="btn-glass btn-sm">Reset</a>
+</form>
+
+<!-- Participants Table (100% Python POST Actions) -->
+<div class="glass-panel card-pad-sm">
+  <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:10px;">Menampilkan <strong>{{ participants|length }}</strong> pendaftar.</div>
+  <div class="table-wrap">
+    <table class="glass-table">
+      <thead>
+        <tr>
+          <th>Kode & Waktu</th>
+          <th>Peserta / Tim</th>
+          <th>NIS & Kelas</th>
+          <th>Event & Cabang</th>
+          <th>Status</th>
+          <th style="text-align:right;">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in participants %}
+        <tr>
+          <td>
+            <div style="font-weight:600;font-size:0.82rem;">{{ p.registration_code }}</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);">{{ p.created_at }}</div>
+          </td>
+          <td>
+            {% if p.comp_type == 'TEAM' %}
+              <strong>{{ p.team_name }}</strong>
+              <div style="font-size:0.75rem;color:var(--text-secondary);">Ketua: {{ p.participant_name }} ({{ p.members|length }} org)</div>
+            {% else %}
+              <strong>{{ p.participant_name }}</strong>
+              <div style="font-size:0.75rem;color:var(--text-muted);">Individu</div>
+            {% endif %}
+          </td>
+          <td>
+            <div>{{ p.nis }}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">{{ p.kelas }}</div>
+          </td>
+          <td>
+            <div>{{ p.competition_name }}</div>
+            <div style="font-size:0.74rem;color:var(--text-muted);">{{ p.event_name }}</div>
+          </td>
+          <td>
+            <form method="POST" action="{{ url_for('admin.update_participant_status', reg_id=p.id) }}" style="display:flex;gap:6px;align-items:center;">
+              <select name="status" class="glass-select" style="padding:6px 10px;font-size:0.8rem;min-width:120px;" onchange="this.form.submit();">
+                {% for st in ['Registered', 'Pending', 'Accepted', 'Rejected'] %}
+                  <option value="{{ st }}" {% if p.status == st %}selected{% endif %}>{{ st }}</option>
+                {% endfor %}
+              </select>
+            </form>
+          </td>
+          <td style="text-align:right;white-space:nowrap;">
+            {% if p.comp_type == 'TEAM' %}
+              <button type="button" class="btn-glass btn-sm" data-open-modal="modalTeam{{ p.id }}">Anggota</button>
+            {% endif %}
+            <form method="POST" action="{{ url_for('admin.delete_participant', reg_id=p.id) }}" style="display:inline;" onsubmit="return confirm('Hapus data pendaftaran peserta ini secara permanen?');">
+              <button type="submit" class="btn-glass btn-sm btn-danger">Hapus</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text-muted);">Tidak ada peserta yang sesuai dengan filter.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Team Members Modals -->
+{% for p in participants %}
+  {% if p.comp_type == 'TEAM' %}
+  <div id="modalTeam{{ p.id }}" class="modal-backdrop">
+    <div class="glass-panel modal-card" style="max-width:540px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div>
+          <div style="font-size:0.72rem;color:var(--accent-cyan);text-transform:uppercase;letter-spacing:0.1em;">Daftar Anggota Tim</div>
+          <h3 style="margin:2px 0 0;">{{ p.team_name }} ({{ p.kelas }})</h3>
+        </div>
+        <button type="button" class="btn-glass btn-sm" data-close-modal>✕</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        {% for m in p.members %}
+        <div class="glass-sub card-pad-sm" style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <strong>{{ m.member_name }}</strong> {% if m.is_captain %}<span class="status-badge status-live" style="margin-left:6px;">Ketua</span>{% endif %}
+            <div style="font-size:0.78rem;color:var(--text-muted);">NIS: {{ m.member_nis }}</div>
+          </div>
+          <span class="glass-chip">{{ m.member_kelas }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — Lombaku{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-eyebrow">PANEL KONTROL PANITIA</div>
+    <h1 class="page-title">Dashboard Panitia</h1>
+    <p class="page-subtitle">Halo, {{ admin_name }}. Pantau statistik lomba, kontrol status event, dan kelola pertandingan secara langsung.</p>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a href="{{ url_for('admin.bracket_control') }}" class="btn-glass btn-primary">Kontrol Bracket</a>
+    <a href="{{ url_for('admin.export_download') }}" class="btn-glass btn-electric">Ekspor Excel (.xlsx)</a>
+  </div>
+</div>
+
+<!-- KPI Counters -->
+<div class="grid-4" style="margin-bottom:22px;">
+  <div class="glass-panel stat-card">
+    <span class="stat-label">Total Pendaftar</span>
+    <span class="stat-value">{{ stats.total_registrations }}</span>
+    <span class="stat-hint">{{ stats.accepted_registrations }} diterima · {{ stats.pending_registrations }} menunggu</span>
+  </div>
+  <div class="glass-panel stat-card">
+    <span class="stat-label">Event Aktif</span>
+    <span class="stat-value" style="color:var(--accent-cyan);">{{ stats.open_events }} / {{ stats.total_events }}</span>
+    <span class="stat-hint">Bulan Bahasa, PORAK, 17 Agustus</span>
+  </div>
+  <div class="glass-panel stat-card">
+    <span class="stat-label">Cabang Lomba</span>
+    <span class="stat-value">{{ stats.total_competitions }}</span>
+    <span class="stat-hint">Individu & Tim terkonfigurasi</span>
+  </div>
+  <div class="glass-panel stat-card">
+    <span class="stat-label">Pertandingan Live</span>
+    <span class="stat-value" style="color:var(--accent-amber);">{{ stats.live_matches }}</span>
+    <span class="stat-hint">{{ stats.completed_matches }} laga selesai</span>
+  </div>
+</div>
+
+<!-- Quick Event Status Switcher (100% Python POST Forms) -->
+<div class="glass-panel card-pad" style="margin-bottom:22px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+    <div>
+      <h2 style="margin:0;font-size:1.15rem;">Kontrol Cepat Status Event</h2>
+      <div style="font-size:0.82rem;color:var(--text-secondary);">Buka, jalankan, kunci, selesaikan, atau tutup event langsung melalui backend Python.</div>
+    </div>
+    <a href="{{ url_for('admin.manage_events') }}" class="btn-glass btn-sm">Kelola Detail Event →</a>
+  </div>
+
+  <div class="grid-3">
+    {% for ev in events %}
+    <div class="glass-sub card-pad-sm">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;">
+        <strong style="font-size:1rem;">{{ ev.name }}</strong>
+        <span class="status-badge status-{{ ev.effective_status|lower }}"><span class="status-dot"></span> {{ ev.effective_status }}</span>
+      </div>
+      <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px;">
+        {{ ev.competition_count }} cabang · {{ ev.participant_count }} peserta · {{ ev.status_reason }}
+      </div>
+      <form method="POST" action="{{ url_for('admin.quick_event_status', event_id=ev.id) }}" style="display:flex;flex-wrap:wrap;gap:6px;">
+        {% for st in ['OPEN', 'ONGOING', 'LOCKED', 'COMPLETED', 'CLOSED'] %}
+          <button type="submit" name="status" value="{{ st }}"
+                  class="mini-pill-btn {% if ev.manual_status == st %}btn-primary{% endif %}">{{ st }}</button>
+        {% endfor %}
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- Live Matches Monitor -->
+  <div class="glass-panel card-pad">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <h3 style="margin:0;font-size:1.08rem;">Pertandingan Berlangsung (LIVE)</h3>
+      <a href="{{ url_for('admin.bracket_control') }}" class="btn-glass btn-sm">Buka Bracket</a>
+    </div>
+    {% if live_matches %}
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        {% for m in live_matches %}
+        <a href="{{ url_for('admin.bracket_control', competition_id=m.comp_id) }}" class="glass-sub card-pad-sm" style="display:block;border-color:rgba(255,160,64,0.38);">
+          <div style="display:flex;justify-content:space-between;font-size:0.74rem;color:var(--accent-amber);margin-bottom:5px;">
+            <span>● {{ m.event_name }} — {{ m.competition_name }}</span>
+            <span>{{ m.round_name }}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:0.9rem;">
+            <span>{{ m.participant1_label }}</span>
+            <span style="padding:2px 10px;border-radius:8px;background:rgba(255,160,64,0.16);">{{ m.score1 }} : {{ m.score2 }}</span>
+            <span>{{ m.participant2_label }}</span>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="alert-glass">Belum ada pertandingan berstatus LIVE saat ini.</div>
+    {% endif %}
+  </div>
+
+  <!-- Recent Registrations -->
+  <div class="glass-panel card-pad">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <h3 style="margin:0;font-size:1.08rem;">Pendaftaran Terbaru</h3>
+      <a href="{{ url_for('admin.participants') }}" class="btn-glass btn-sm">Semua Peserta</a>
+    </div>
+    <div class="table-wrap">
+      <table class="glass-table">
+        <thead>
+          <tr>
+            <th>Peserta / Tim</th>
+            <th>Cabang</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in recent_registrations %}
+          <tr>
+            <td>
+              <strong>{{ r.team_name or r.participant_name }}</strong>
+              <div style="font-size:0.74rem;color:var(--text-muted);">{{ r.kelas }} · {{ r.registration_code }}</div>
+            </td>
+            <td>
+              <div>{{ r.competition_name }}</div>
+              <div style="font-size:0.74rem;color:var(--text-muted);">{{ r.event_name }}</div>
+            </td>
+            <td><span class="status-badge status-{{ r.status|lower }}">{{ r.status }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

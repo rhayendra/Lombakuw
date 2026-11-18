@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% block title %}Lombaku — Beranda Perlombaan Sekolah{% endblock %}
+
+{% block content %}
+{% set ev = active_event %}
+<section class="hero-canvas">
+  <!-- Main Spatial Hero Stage (100% Server-Rendered Jinja2) -->
+  <div class="hero-stage">
+    <!-- Left Vertical Glass Event Selector Rail (I / II / III) -->
+    <aside class="hero-left-rail" aria-label="Pilih Event Unggulan">
+      {% set romans = ['I', 'II', 'III', 'IV', 'V'] %}
+      {% for item in events %}
+        <a href="{{ url_for('public.home', event=item.slug) }}"
+           class="hero-rail-item {% if ev and item.id == ev.id %}active{% endif %}">
+          <span class="hero-rail-num">{{ romans[loop.index0] if loop.index0 < 5 else loop.index }}</span>
+          <span class="hero-rail-label">
+            {{ item.name }}
+            <small style="display:block;font-size:0.66rem;color:var(--text-muted);font-weight:400;">{{ item.effective_status }}</small>
+          </span>
+        </a>
+      {% endfor %}
+    </aside>
+
+    <!-- Central Dominant Event Showcase -->
+    {% if ev %}
+    <div class="hero-center">
+      <div class="hero-meta-line">
+        <span>EVENT UNGGULAN SEKOLAH</span>
+        <span class="status-badge status-{{ ev.effective_status|lower }}">
+          <span class="status-dot"></span> {{ ev.effective_status }}
+        </span>
+      </div>
+
+      <h1 class="hero-event-title">
+        {{ ev.name }} <span class="hero-event-year">2026</span>
+      </h1>
+      <p class="hero-event-subtitle">{{ ev.subtitle or ev.description }}</p>
+
+      <!-- Floating Glass Sculpture + Satellites -->
+      <div class="hero-sculpture-wrap">
+        <div class="sculpture-glow accent-{{ ev.theme_accent or 'cyan' }}"></div>
+
+        <div class="hero-satellite hero-sat-left">
+          <div class="sat-value">{{ ev.participant_count }}</div>
+          <div class="sat-label">Peserta Aktif</div>
+        </div>
+
+        <div class="glass-emblem-card">
+          {% if ev.icon_type == 'quill' %}
+            <svg class="emblem-svg" viewBox="0 0 80 80" fill="none">
+              <defs><linearGradient id="gQuill" x1="12" y1="10" x2="68" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#E6F7FF"/><stop offset="55%" stop-color="#38D6FF"/><stop offset="100%" stop-color="#3B82F6"/></linearGradient></defs>
+              <circle cx="40" cy="40" r="31" stroke="rgba(255,255,255,0.2)" stroke-width="1.2" stroke-dasharray="4 5"/>
+              <path d="M58 18C42 20 28 32 22 54L18 62L26 58C46 53 58 38 58 18Z" stroke="url(#gQuill)" stroke-width="2.4" fill="rgba(56,214,255,0.14)" stroke-linejoin="round"/>
+              <path d="M22 54L46 30" stroke="#E6F7FF" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="56" cy="20" r="3" fill="#FFB020"/>
+            </svg>
+          {% elif ev.icon_type == 'star' %}
+            <svg class="emblem-svg" viewBox="0 0 80 80" fill="none">
+              <defs><linearGradient id="gStar" x1="16" y1="14" x2="64" y2="66" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#FEF3C7"/><stop offset="55%" stop-color="#FFB020"/><stop offset="100%" stop-color="#3B9EFF"/></linearGradient></defs>
+              <circle cx="40" cy="40" r="31" stroke="rgba(255,255,255,0.2)" stroke-width="1.2" stroke-dasharray="4 5"/>
+              <polygon points="40,16 46.5,31.5 63,33 50.5,44 54.2,60.5 40,51.8 25.8,60.5 29.5,44 17,33 33.5,31.5" stroke="url(#gStar)" stroke-width="2.3" fill="rgba(255,176,32,0.15)" stroke-linejoin="round"/>
+              <circle cx="40" cy="40" r="4" fill="#FFF"/>
+            </svg>
+          {% else %}
+            <svg class="emblem-svg" viewBox="0 0 80 80" fill="none">
+              <defs><linearGradient id="gFlame" x1="18" y1="12" x2="62" y2="68" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#E0F2FE"/><stop offset="50%" stop-color="#38D6FF"/><stop offset="100%" stop-color="#6366F1"/></linearGradient></defs>
+              <circle cx="40" cy="40" r="31" stroke="rgba(255,255,255,0.2)" stroke-width="1.2" stroke-dasharray="4 5"/>
+              <path d="M26 22H54V33C54 42 48 48 40 48C32 48 26 42 26 33V22Z" stroke="url(#gFlame)" stroke-width="2.4" fill="rgba(59,158,255,0.16)"/>
+              <path d="M26 27H19C19 34 22 38 26 39M54 27H61C61 34 58 38 54 39" stroke="#E0F2FE" stroke-width="2" stroke-linecap="round"/>
+              <path d="M40 48V58M31 58H49" stroke="#E0F2FE" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="40" cy="34" r="4" fill="#FFB020"/>
+            </svg>
+          {% endif %}
+          <span class="emblem-tag">
+            {% if ev.effective_status == 'OPEN' %}PENDAFTARAN DIBUKA
+            {% elif ev.effective_status == 'ONGOING' %}SEDANG BERLANGSUNG
+            {% elif ev.effective_status == 'COMPLETED' %}EVENT SELESAI
+            {% elif ev.effective_status == 'LOCKED' %}TERKUNCI
+            {% else %}SEGERA HADIR{% endif %}
+          </span>
+        </div>
+
+        <div class="hero-satellite hero-sat-right">
+          <div class="sat-value">{{ ev.competition_count }}</div>
+          <div class="sat-label">Cabang Lomba</div>
+        </div>
+      </div>
+
+      <!-- Orbital Tick-Arc Switcher (< 01 / 03 >) -->
+      <div class="orbital-switcher">
+        <svg class="orbital-arc-svg" viewBox="0 0 600 46" fill="none" aria-hidden="true">
+          <path d="M24 8 Q300 48 576 8" stroke="rgba(255,255,255,0.28)" stroke-width="2.5" stroke-dasharray="2 6" stroke-linecap="round"/>
+          <path d="M160 22 Q300 40 440 22" stroke="rgba(56,214,255,0.5)" stroke-width="1.5" stroke-dasharray="3 7" stroke-linecap="round"/>
+        </svg>
+        <div class="orbital-controls">
+          <a href="{{ url_for('public.home', event=prev_event.slug) }}" class="orb-btn" aria-label="Event Sebelumnya">‹</a>
+          <span class="orb-counter">0{{ active_idx + 1 }} / 0{{ events|length }}</span>
+          <a href="{{ url_for('public.home', event=next_event.slug) }}" class="orb-btn" aria-label="Event Berikutnya">›</a>
+        </div>
+      </div>
+
+      <!-- Primary Actions -->
+      <div class="hero-cta-row">
+        {% if ev.can_register %}
+          <a href="{{ url_for('public.register_page', event_id=ev.id) }}" class="btn-glass btn-primary">Daftar Lomba Sekarang</a>
+        {% else %}
+          <span class="btn-glass btn-primary is-disabled">Pendaftaran {{ ev.effective_status }}</span>
+        {% endif %}
+        <a href="{{ url_for('public.event_detail', slug=ev.slug) }}" class="btn-glass btn-electric">Lihat Detail Event</a>
+        <a href="{{ url_for('public.bracket_page') }}" class="btn-glass">Bracket Pertandingan</a>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Right Floating Live Notifications Cluster -->
+    <aside class="hero-right-cluster" aria-label="Pembaruan Langsung">
+      {% if live_matches %}
+        {% for m in live_matches[:2] %}
+          <a href="{{ url_for('public.bracket_page', competition_id=m.comp_id) }}" class="notif-pill is-live-notif">
+            <div class="notif-top">
+              <span style="color:var(--accent-amber);font-weight:700;">● LIVE MATCH</span>
+              <span>{{ m.event_name }}</span>
+            </div>
+            <div class="notif-title">{{ m.competition_name }}</div>
+            <div class="notif-meta">
+              {{ m.participant1_label.split(' (')[0] }} <strong style="color:#ffd08a;">{{ m.score1 }}–{{ m.score2 }}</strong> {{ m.participant2_label.split(' (')[0] }}
+            </div>
+          </a>
+        {% endfor %}
+      {% endif %}
+
+      {% if recent_winners %}
+        {% set w = recent_winners[0] %}
+        <a href="{{ url_for('public.bracket_page', competition_id=w.comp_id) }}" class="notif-pill">
+          <div class="notif-top">
+            <span style="color:var(--accent-cyan);font-weight:700;">★ HASIL TERBARU</span>
+            <span>{{ w.round_name }}</span>
+          </div>
+          <div class="notif-title">{{ w.winner_label }}</div>
+          <div class="notif-meta">Menang di {{ w.competition_name }} ({{ w.score1 }}–{{ w.score2 }})</div>
+        </a>
+      {% endif %}
+
+      <a href="{{ url_for('public.info_page') }}" class="notif-pill">
+        <div class="notif-top">
+          <span>INFO PANITIA</span>
+          <span>2026</span>
+        </div>
+        <div class="notif-meta" style="color:var(--text-primary);">{{ school_settings.announcement }}</div>
+      </a>
+    </aside>
+  </div>
+
+  <!-- Bottom 3-Column Floating Glass Telemetry Panels -->
+  <div class="telemetry-dock">
+    <!-- Card 1: Event Scale & Sparkline -->
+    <a href="{{ url_for('public.event_detail', slug=ev.slug) if ev else url_for('public.events_page') }}" class="glass-panel glass-hover telemetry-card">
+      <div class="telemetry-head">
+        <div class="telemetry-head-left">
+          <div class="telemetry-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <div class="telemetry-title">Partisipasi Event</div>
+            <div class="telemetry-sub">Statistik cabang & pendaftar</div>
+          </div>
+        </div>
+        <span class="circle-arrow">›</span>
+      </div>
+      <div class="telemetry-body">
+        <div>
+          <div class="metric-big accent-electric">{{ ev.participant_count if ev else 0 }}<span class="metric-unit">Peserta</span></div>
+          <div class="metric-caption">{{ ev.status_reason if ev else '' }}</div>
+        </div>
+        <div style="text-align:right;">
+          <svg width="96" height="44" viewBox="0 0 96 44" fill="none" aria-hidden="true">
+            <path d="M4 38 C24 36, 36 26, 54 18 C68 12, 80 10, 92 6" stroke="#38D6FF" stroke-width="2" stroke-linecap="round"/>
+            <path d="M4 42 C26 39, 44 33, 66 26 C78 22, 86 20, 92 17" stroke="rgba(139,108,255,0.65)" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          <div style="font-size:0.74rem;color:var(--text-secondary);"><strong style="color:#fff;">{{ ev.competition_count if ev else 0 }}</strong> Cabang · <strong style="color:var(--accent-cyan);">{{ total_participants }}</strong> Total</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Card 2: Countdown & Ring Progress -->
+    <a href="{{ url_for('public.register_page', event_id=ev.id) if ev else url_for('public.register_page') }}"
+       class="glass-panel glass-hover telemetry-card"
+       data-countdown-target="{{ ev.event_date if ev else '' }}">
+      <div class="telemetry-head">
+        <div class="telemetry-head-left">
+          <div class="telemetry-icon is-warm">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+          </div>
+          <div>
+            <div class="telemetry-title">Countdown Pelaksanaan</div>
+            <div class="telemetry-sub">{{ ev.event_date_label if ev else '-' }}</div>
+          </div>
+        </div>
+        <span class="circle-arrow">›</span>
+      </div>
+      <div class="telemetry-body">
+        <div>
+          <div class="metric-big accent-warm"><span data-cd="days">{{ '%02d'|format(countdown.days) }}</span><span class="metric-unit">Hari</span></div>
+          <div class="countdown-strip">
+            <span class="cd-pill" data-cd="hours">{{ '%02d'|format(countdown.hours) }}j</span>
+            <span class="cd-pill" data-cd="mins">{{ '%02d'|format(countdown.mins) }}m</span>
+            <span class="cd-pill" data-cd="secs">{{ '%02d'|format(countdown.secs) }}d</span>
+          </div>
+        </div>
+        <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(164,206,255,0.16)" stroke-width="4.2"/>
+          <circle cx="32" cy="32" r="26" fill="none" stroke="#38D6FF" stroke-width="4.2" stroke-linecap="round"
+                  stroke-dasharray="163.36" stroke-dashoffset="{{ countdown.ring_offset }}" transform="rotate(-90 32 32)"/>
+          <circle cx="32" cy="32" r="4.5" fill="#FFB020"/>
+        </svg>
+      </div>
+    </a>
+
+    <!-- Card 3: Competition Distribution Micro-Bars & Live Bracket -->
+    <a href="{{ url_for('public.bracket_page') }}" class="glass-panel glass-hover telemetry-card">
+      <div class="telemetry-head">
+        <div class="telemetry-head-left">
+          <div class="telemetry-icon is-violet">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 6h5v5H4M4 18h5v-5M9 11h6v2h5"/></svg>
+          </div>
+          <div>
+            <div class="telemetry-title">Distribusi & Bracket</div>
+            <div class="telemetry-sub">{{ live_matches|length }} laga live · {{ total_competitions }} cabang</div>
+          </div>
+        </div>
+        <span class="circle-arrow">›</span>
+      </div>
+      <div class="telemetry-body">
+        <div>
+          <div class="metric-big accent-violet">{{ total_competitions }}</div>
+          <div class="metric-caption">Cabang aktif di sekolah</div>
+        </div>
+        <div class="micro-bars" style="width:155px;">
+          {% set max_cnt = namespace(val=1) %}
+          {% for b in comp_bars %}
+            {% if b.cnt > max_cnt.val %}{% set max_cnt.val = b.cnt %}{% endif %}
+          {% endfor %}
+          {% for b in comp_bars[:7] %}
+            {% set h = ((b.cnt / max_cnt.val) * 44) | int %}
+            <div class="micro-bar-col" title="{{ b.name }}: {{ b.cnt }} peserta">
+              <div class="micro-bar-fill {% if b.cnt == max_cnt.val %}is-peak{% endif %}" style="height:{{ h if h > 10 else 10 }}px;"></div>
+              <span class="micro-bar-label">{{ b.name[:4] }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% block title %}Pendaftaran Lomba — Lombaku{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-eyebrow">REGISTRASI DIGITAL SISWA (PYTHON BACKEND)</div>
+    <h1 class="page-title">Pendaftaran Perlombaan</h1>
+    <p class="page-subtitle">Satu siswa hanya boleh mendaftar pada satu cabang lomba dalam satu event. Buka dan setujui Tab Juknis terlebih dahulu untuk membuka formulir pendaftaran.</p>
+  </div>
+</div>
+
+<!-- Event & Competition Selector (Pure HTML GET Form -> Flask Python) -->
+<div class="glass-panel card-pad" style="margin-bottom:20px;">
+  <form method="GET" action="{{ url_for('public.register_page') }}" class="form-grid" style="align-items:end;">
+    <input type="hidden" name="tab" value="juknis">
+    <div class="form-group">
+      <label class="form-label" for="regEventSelect">1. Pilih Event Perlombaan</label>
+      <select id="regEventSelect" name="event_id" class="glass-select" onchange="this.form.competition_id.value=''; this.form.submit();">
+        {% for ev in events %}
+          <option value="{{ ev.id }}" {% if active_event and ev.id == active_event.id %}selected{% endif %}>
+            {{ ev.name }} ({{ ev.effective_status }})
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="regCompSelect">2. Pilih Cabang Lomba</label>
+      <div style="display:flex;gap:8px;">
+        <select id="regCompSelect" name="competition_id" class="glass-select" onchange="this.form.submit();">
+          {% for c in event_comps %}
+            <option value="{{ c.id }}" {% if active_comp and c.id == active_comp.id %}selected{% endif %}>
+              {{ c.name }} · {{ 'Tim (' ~ c.min_members ~ '–' ~ c.max_members ~ ' org)' if c.comp_type == 'TEAM' else 'Individu' }}
+            </option>
+          {% else %}
+            <option value="">Belum ada cabang lomba</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn-glass btn-sm">Pilih</button>
+      </div>
+    </div>
+  </form>
+
+  {% if active_event and not active_event.can_register %}
+    <div class="alert-glass alert-warning" style="margin-top:16px;">
+      <span>▲</span>
+      <div><strong>Pendaftaran {{ active_event.effective_status }}:</strong> {{ active_event.status_reason }}</div>
+    </div>
+  {% elif active_comp and active_comp.registered_count >= active_comp.max_slots %}
+    <div class="alert-glass alert-warning" style="margin-top:16px;">
+      <span>▲</span>
+      <div><strong>Kuota Penuh:</strong> Cabang {{ active_comp.name }} telah mencapai batas maksimal {{ active_comp.max_slots }} slot.</div>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Tabs: Server-Side Navigation (Juknis -> Form -> Status) -->
+<div class="glass-tabs" role="tablist">
+  <a href="{{ url_for('public.register_page', event_id=active_event.id if active_event else '', competition_id=active_comp.id if active_comp else '', tab='juknis') }}"
+     class="glass-tab-btn {% if active_tab == 'juknis' %}active{% endif %}">
+    1. Baca Juknis (Wajib)
+  </a>
+  <a href="{{ url_for('public.register_page', event_id=active_event.id if active_event else '', competition_id=active_comp.id if active_comp else '', tab='form') }}"
+     class="glass-tab-btn {% if active_tab == 'form' %}active{% endif %} {% if not juknis_unlocked %}is-locked-tab{% endif %}">
+    2. Formulir Pendaftaran {% if not juknis_unlocked %}🔒{% else %}✓{% endif %}
+  </a>
+  <a href="{{ url_for('public.register_page', event_id=active_event.id if active_event else '', competition_id=active_comp.id if active_comp else '', tab='status') }}"
+     class="glass-tab-btn {% if active_tab == 'status' %}active{% endif %}">
+    3. Cek Status Pendaftaran
+  </a>
+</div>
+
+<!-- PANE 1: MANDATORY JUKNIS TAB -->
+{% if active_tab == 'juknis' and active_comp %}
+<section class="glass-panel card-pad">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+    <div>
+      <h2 style="margin:0;font-size:1.22rem;">Juknis & Kisi-kisi: {{ active_comp.name }}</h2>
+      <div style="font-size:0.84rem;color:var(--text-secondary);">Baca seluruh aturan terlebih dahulu sebelum mengaktifkan formulir pendaftaran.</div>
+    </div>
+    <div class="event-chip-row" style="margin:0;">
+      <span class="glass-chip">{{ 'Lomba Tim (' ~ active_comp.min_members ~ '–' ~ active_comp.max_members ~ ' org)' if active_comp.comp_type == 'TEAM' else 'Lomba Individu' }}</span>
+      <span class="glass-chip">Kuota: {{ active_comp.registered_count }} / {{ active_comp.max_slots }}</span>
+      {% if active_comp.venue %}<span class="glass-chip">{{ active_comp.venue }}</span>{% endif %}
+      {% if active_comp.schedule_info %}<span class="glass-chip">{{ active_comp.schedule_info }}</span>{% endif %}
+      {% if active_comp.comp_type == 'TEAM' and active_comp.same_class_required %}
+        <span class="glass-chip" style="border-color:rgba(255,176,32,0.45);color:#ffe2a8;">Wajib Satu Kelas</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:18px;">
+    <div>
+      <div class="form-label" style="margin-bottom:8px;">Juknis Khusus Cabang Lomba</div>
+      <div class="juknis-box">{{ active_comp.juknis or active_comp.description or 'Mengikuti ketentuan panitia.' }}</div>
+    </div>
+    <div>
+      <div class="form-label" style="margin-bottom:8px;">Ketentuan Umum Event ({{ active_event.name }})</div>
+      <div class="juknis-box">{{ active_event.juknis or 'Mengikuti peraturan umum sekolah.' }}</div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+    <span style="font-size:0.82rem;color:var(--text-muted);">* Validasi duplikasi NIS, kuota, jadwal, dan jumlah anggota dijalankan langsung oleh backend Python.</span>
+    {% if active_event.can_register and active_comp.registered_count < active_comp.max_slots %}
+      <form method="POST" action="{{ url_for('public.confirm_juknis') }}">
+        <input type="hidden" name="event_id" value="{{ active_event.id }}">
+        <input type="hidden" name="competition_id" value="{{ active_comp.id }}">
+        <button type="submit" class="btn-glass btn-primary">Saya Sudah Membaca Juknis — Lanjut ke Formulir →</button>
+      </form>
+    {% else %}
+      <span class="btn-glass is-disabled">Pendaftaran {{ active_event.effective_status if not active_event.can_register else 'Penuh' }}</span>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+<!-- PANE 2: REGISTRATION FORM (INDIVIDUAL & DYNAMIC TEAM) -->
+{% if active_tab == 'form' and active_comp %}
+<section class="glass-panel card-pad">
+  <div class="alert-glass alert-success" style="margin-bottom:18px;">
+    <span>✦</span>
+    <div>Juknis <strong>{{ active_comp.name }}</strong> ({{ active_event.name }}) terkonfirmasi oleh server. Silakan isi data pendaftaran Anda.</div>
+  </div>
+
+  {% if last_receipt %}
+  <div class="alert-glass alert-success" style="margin-bottom:20px;flex-direction:column;" data-celebrate-anchor="success">
+    <div style="display:flex;justify-content:space-between;align-items:center;width:100%;flex-wrap:wrap;gap:10px;">
+      <strong style="font-size:1.05rem;color:#b7fce3;">✦ Pendaftaran Berhasil Tercatat!</strong>
+      <span class="status-badge status-registered"><span class="status-dot"></span> {{ last_receipt.status }}</span>
+    </div>
+    <div style="font-size:0.9rem;color:var(--text-secondary);line-height:1.7;">
+      Kode Pendaftaran: <strong style="color:#fff;font-size:1rem;">{{ last_receipt.registration_code }}</strong><br>
+      Event & Cabang: <strong>{{ last_receipt.event_name }} — {{ last_receipt.competition_name }}</strong><br>
+      Peserta / Tim: <strong>{{ last_receipt.participant_name }}</strong>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="{{ url_for('public.bracket_page', competition_id=active_comp.id) }}" class="btn-glass btn-sm btn-primary">Lihat Bracket Lomba</a>
+      <a href="{{ url_for('public.register_page', event_id=active_event.id, competition_id=active_comp.id, tab='status', q=last_receipt.registration_code) }}" class="btn-glass btn-sm btn-electric">Cek Status Kode Ini</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <form method="POST" action="{{ url_for('public.register_page') }}" autocomplete="off">
+    <input type="hidden" name="event_id" value="{{ active_event.id }}">
+    <input type="hidden" name="competition_id" value="{{ active_comp.id }}">
+    <input type="hidden" name="tab" value="form">
+
+    {% if active_comp.comp_type == 'TEAM' %}
+      <div class="glass-sub card-pad-sm" style="margin-bottom:16px;">
+        <div style="font-size:0.74rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);font-weight:700;margin-bottom:4px;">Mode Pendaftaran Tim</div>
+        <div style="font-size:0.86rem;color:var(--text-secondary);">
+          Minimal <strong>{{ active_comp.min_members }} orang</strong>, maksimal <strong>{{ active_comp.max_members }} orang</strong> (sudah termasuk Ketua Tim).
+          {% if active_comp.same_class_required %}
+            <strong style="color:#ffe2a8;">Seluruh anggota wajib berasal dari kelas yang sama.</strong>
+          {% else %}
+            Anggota diperbolehkan lintas kelas.
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px;">
+        <label class="form-label" for="regTeamName">Nama Tim *</label>
+        <input type="text" id="regTeamName" name="team_name" class="glass-input" value="{{ form_data.get('team_name', '') }}" placeholder="Contoh: Garuda XI IPA 1" required>
+      </div>
+    {% endif %}
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label" for="regParticipantName">{{ 'Nama Ketua Tim *' if active_comp.comp_type == 'TEAM' else 'Nama Lengkap Siswa *' }}</label>
+        <input type="text" id="regParticipantName" name="participant_name" class="glass-input" value="{{ form_data.get('participant_name', '') }}" placeholder="Masukkan nama lengkap" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regNis">{{ 'NIS Ketua Tim *' if active_comp.comp_type == 'TEAM' else 'Nomor Induk Siswa (NIS) *' }}</label>
+        <input type="text" id="regNis" name="nis" class="glass-input" value="{{ form_data.get('nis', '') }}" placeholder="Contoh: 250901" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regKelas">
+          {% if active_comp.comp_type == 'TEAM' and active_comp.same_class_required %}Kelas Tim (Wajib Sama) *
+          {% elif active_comp.comp_type == 'TEAM' %}Kelas Ketua Tim *
+          {% else %}Kelas *{% endif %}
+        </label>
+        <input type="text" id="regKelas" name="kelas" class="glass-input" value="{{ form_data.get('kelas', '') }}" placeholder="Contoh: XI IPA 1" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="regContact">Kontak WhatsApp (Opsional)</label>
+        <input type="text" id="regContact" name="contact" class="glass-input" value="{{ form_data.get('contact', '') }}" placeholder="Contoh: 0812-3456-7890">
+      </div>
+    </div>
+
+    {% if active_comp.comp_type == 'TEAM' %}
+      <div style="margin-top:20px;">
+        <div class="form-label" style="margin-bottom:10px;">
+          Daftar Anggota Tim Lainnya (Ketua dihitung sebagai Anggota #1)
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          {% set prev_members = form_data.get('members', []) %}
+          {% for i in range(max_extra_members) %}
+            {% set is_req = i < required_extra_members %}
+            {% set prev_m = prev_members[i] if i < prev_members|length else {} %}
+            <div class="member-row">
+              <span class="member-num">{{ i + 2 }}</span>
+              <input type="text" name="member_name[]" class="glass-input" value="{{ prev_m.get('name', '') }}"
+                     placeholder="Nama Anggota {{ i + 2 }}{% if not is_req %} (Cadangan Opsional){% endif %}" {% if is_req %}required{% endif %}>
+              <input type="text" name="member_nis[]" class="glass-input" value="{{ prev_m.get('nis', '') }}"
+                     placeholder="NIS Anggota {{ i + 2 }}" {% if is_req %}required{% endif %}>
+              <input type="text" name="member_kelas[]" class="glass-input" value="{{ prev_m.get('kelas', '') }}"
+                     placeholder="{{ 'Sama dgn Ketua' if active_comp.same_class_required else 'Kelas' }}">
+              <span class="glass-chip" style="justify-content:center;">{{ 'Wajib' if is_req else 'Opsional' }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="form-group" style="margin-top:16px;">
+      <label class="form-label" for="regNotes">Catatan Tambahan (Opsional)</label>
+      <textarea id="regNotes" name="notes" class="glass-textarea" placeholder="Misal: judul naskah, kebutuhan khusus, dll." style="min-height:72px;">{{ form_data.get('notes', '') }}</textarea>
+    </div>
+
+    <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap;">
+      <a href="{{ url_for('public.register_page', event_id=active_event.id, competition_id=active_comp.id, tab='juknis') }}" class="btn-glass">← Kembali ke Juknis</a>
+      <button type="submit" class="btn-glass btn-primary">Kirim Pendaftaran Lomba</button>
+    </div>
+  </form>
+</section>
+{% endif %}
+
+<!-- PANE 3: REGISTRATION STATUS LOOKUP -->
+{% if active_tab == 'status' %}
+<section class="glass-panel card-pad">
+  <h2 style="margin:0 0 6px;font-size:1.2rem;">Cek Status Pendaftaran Anda</h2>
+  <p style="margin:0 0 16px;font-size:0.86rem;color:var(--text-secondary);">Masukkan NIS siswa (individu maupun anggota tim) atau Kode Pendaftaran (contoh: <code>240101</code> atau <code>LMB-2026-0001</code>).</p>
+  <form method="GET" action="{{ url_for('public.register_page') }}" style="display:flex;gap:10px;flex-wrap:wrap;">
+    <input type="hidden" name="event_id" value="{{ active_event.id if active_event else '' }}">
+    <input type="hidden" name="competition_id" value="{{ active_comp.id if active_comp else '' }}">
+    <input type="hidden" name="tab" value="status">
+    <input type="text" name="q" value="{{ search_q }}" class="glass-input" placeholder="Masukkan NIS atau Kode Pendaftaran..." style="flex:1;min-width:220px;" required>
+    <button type="submit" class="btn-glass btn-primary">Cek Status</button>
+  </form>
+
+  {% if search_q %}
+    <div style="margin-top:16px;">
+      {% if lookup_results %}
+        {% for item in lookup_results %}
+        <div class="glass-sub card-pad-sm" style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+            <div>
+              <div style="font-weight:700;font-size:0.98rem;">{{ item.team_name or item.participant_name }}</div>
+              <div style="font-size:0.8rem;color:var(--text-secondary);">{{ item.event_name }} · {{ item.competition_name }}</div>
+            </div>
+            <span class="status-badge status-{{ item.status|lower }}"><span class="status-dot"></span> {{ item.status }}</span>
+          </div>
+          <div class="event-chip-row">
+            <span class="glass-chip">Kode: {{ item.registration_code }}</span>
+            <span class="glass-chip">NIS: {{ item.nis }}</span>
+            <span class="glass-chip">Kelas: {{ item.kelas }}</span>
+          </div>
+          {% if item.members %}
+            <div style="margin-top:8px;font-size:0.8rem;color:var(--text-muted);">
+              Anggota:
+              {% for m in item.members %}
+                {{ m.member_name }} ({{ m.member_nis }}){% if not loop.last %}, {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="alert-glass alert-warning">Belum ditemukan pendaftaran untuk NIS / Kode <strong>{{ search_q }}</strong>.</div>
+      {% endif %}
+    </div>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}

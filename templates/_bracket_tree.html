@@ -1,0 +1,97 @@
+{# Partial Jinja2 untuk merender seluruh Interactive Tournament Bracket di sisi server (Python) #}
+{% if bracket and bracket.rounds %}
+
+  <!-- Champion Spotlight Banner -->
+  {% if bracket.champion %}
+  <div class="champion-banner" data-celebrate-anchor="winner">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="width:46px;height:46px;border-radius:14px;background:rgba(255,176,32,0.22);border:1px solid rgba(255,186,82,0.52);display:flex;align-items:center;justify-content:center;font-size:1.35rem;">🏆</div>
+      <div>
+        <div style="font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:#ffd08a;font-weight:700;">Juara Cabang {{ bracket.competition.name }}</div>
+        <div style="font-size:1.3rem;font-weight:700;color:#fff;">{{ bracket.champion }}</div>
+      </div>
+    </div>
+    <span class="status-badge status-ongoing">Champion Terkonfirmasi</span>
+  </div>
+  {% endif %}
+
+  <!-- Mobile Round Tabs (Pure Flask Links) -->
+  <div class="mobile-round-tabs">
+    {% for r in bracket.rounds %}
+      {% set tab_url = url_for('admin.bracket_control' if is_admin_bracket else 'public.bracket_page', competition_id=selected_comp_id, round=r.round_number, view=view_mode) %}
+      <a href="{{ tab_url }}" class="btn-glass btn-sm {% if r.round_number == active_round %}btn-primary{% endif %}">
+        {{ r.round_name }}
+      </a>
+    {% endfor %}
+  </div>
+
+  <!-- Bracket Viewport -->
+  <div id="bracketViewport" class="glass-panel bracket-viewport">
+    <div id="bracketCanvas" class="bracket-canvas {% if view_mode == 'tabs' %}mobile-tabbed-mode{% endif %} {% if shuffled %}is-shuffling{% endif %}">
+      {% set total_rounds = bracket.rounds|length %}
+      {% for r in bracket.rounds %}
+        {% set is_final = (r.round_number == total_rounds) %}
+        <div class="bracket-round-col {% if r.round_number == active_round %}mobile-active-round{% endif %}">
+          <div class="bracket-round-header">{{ r.round_name }}</div>
+          <div class="bracket-round-matches">
+            {% for m in r.matches %}
+              {% set p1_win = m.winner_id and m.winner_id == m.participant1_id %}
+              {% set p2_win = m.winner_id and m.winner_id == m.participant2_id %}
+              {% set is_live = m.status == 'LIVE' %}
+              {% set st_class = 'status-live' if m.status == 'LIVE' else ('status-accepted' if m.status == 'COMPLETED' else ('status-completed' if m.status == 'BYE' else 'status-registered')) %}
+
+              <div class="match-node {% if is_live %}is-live{% endif %} {% if highlight_round and r.round_number == highlight_round %}is-just-advanced{% endif %}">
+                <div class="match-meta-bar">
+                  <span>Match #{{ m.match_order }}{% if m.scheduled_time %} · {{ m.scheduled_time }}{% endif %}</span>
+                  <span class="status-badge {{ st_class }}" style="padding:2px 8px;font-size:0.62rem;">
+                    {% if is_live %}<span class="status-dot"></span>{% endif %}{{ m.status }}
+                  </span>
+                </div>
+
+                <div class="match-slot {% if p1_win %}is-winner {% if is_final %}is-champion-slot{% endif %}{% endif %} {% if m.participant1_label == 'BYE' %}is-bye{% endif %}">
+                  <span class="slot-name" title="{{ m.participant1_label }}">{{ m.participant1_label }}</span>
+                  <span class="slot-score">{{ m.score1 }}</span>
+                </div>
+
+                <div class="match-slot {% if p2_win %}is-winner {% if is_final %}is-champion-slot{% endif %}{% endif %} {% if m.participant2_label == 'BYE' %}is-bye{% endif %}">
+                  <span class="slot-name" title="{{ m.participant2_label }}">{{ m.participant2_label }}</span>
+                  <span class="slot-score">{{ m.score2 }}</span>
+                </div>
+
+                {% if is_admin_bracket and m.status != 'BYE' %}
+                <form method="POST" action="{{ url_for('admin.bracket_match_update', match_id=m.id) }}" class="match-admin-bar">
+                  <div class="match-score-inputs">
+                    <input type="number" min="0" name="score1" class="score-mini-input" value="{{ m.score1 }}" aria-label="Skor 1">
+                    <span style="font-size:0.7rem;color:var(--text-muted);">vs</span>
+                    <input type="number" min="0" name="score2" class="score-mini-input" value="{{ m.score2 }}" aria-label="Skor 2">
+                  </div>
+                  <div class="match-action-btns">
+                    <button type="submit" name="match_action" value="save" class="mini-pill-btn">Simpan</button>
+                    <button type="submit" name="match_action" value="live" class="mini-pill-btn">{{ 'Stop Live' if is_live else 'Set LIVE' }}</button>
+                  </div>
+                  <div class="match-action-btns">
+                    <button type="submit" name="match_action" value="win1" class="mini-pill-btn win-btn" {% if not m.participant1_id %}disabled style="opacity:0.4;"{% endif %}>★ Menang 1</button>
+                    <button type="submit" name="match_action" value="win2" class="mini-pill-btn win-btn" {% if not m.participant2_id %}disabled style="opacity:0.4;"{% endif %}>★ Menang 2</button>
+                  </div>
+                </form>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+{% else %}
+  <div class="glass-panel card-pad" style="text-align:center;max-width:540px;margin:20px auto;">
+    <div style="font-size:1.12rem;font-weight:600;margin-bottom:6px;">Bracket Belum Dibuat</div>
+    <p style="color:var(--text-secondary);font-size:0.88rem;margin:0;">
+      {% if is_admin_bracket %}
+        Tersedia <strong>{{ bracket.eligible_count if bracket else 0 }}</strong> peserta siap tanding. Tekan <strong>Buat Bracket</strong> atau <strong>SHUFFLE BRACKET</strong> di atas.
+      {% else %}
+        Panitia belum mempublikasikan bagan pertandingan untuk cabang lomba ini.
+      {% endif %}
+    </p>
+  </div>
+{% endif %}

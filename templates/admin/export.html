@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Export Data Excel — Admin Lombaku{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-eyebrow">LAPORAN EXCEL (.XLSX)</div>
+    <h1 class="page-title">Export Data Pendaftaran</h1>
+    <p class="page-subtitle">Unduh data pendaftaran peserta dan tim yang sudah tersimpan di SQLite ke format Microsoft Excel (.xlsx) rapi dengan dua sheet (Detail + Ringkasan).</p>
+  </div>
+</div>
+
+<div class="grid-3">
+  <!-- Option 1: All Events -->
+  <div class="glass-panel glass-hover card-pad" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;">
+    <div>
+      <div class="page-eyebrow">EKSPOR LENGKAP</div>
+      <h2 style="margin:0 0 8px;font-size:1.3rem;">Semua Event Sekolah</h2>
+      <p style="color:var(--text-secondary);font-size:0.87rem;margin:0 0 14px;">Mengekspor seluruh peserta dari Bulan Bahasa, PORAK, 17 Agustus, beserta semua cabang dan anggota tim.</p>
+      <span class="glass-chip">Total Saat Ini: {{ total_all }} Pendaftar</span>
+    </div>
+    <a href="{{ url_for('admin.export_download') }}" class="btn-glass btn-primary" style="width:100%;">Unduh Excel Semua Event (.xlsx)</a>
+  </div>
+
+  <!-- Option 2: Specific Event -->
+  <div class="glass-panel glass-hover card-pad" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;">
+    <div>
+      <div class="page-eyebrow">EKSPOR PER EVENT</div>
+      <h2 style="margin:0 0 8px;font-size:1.3rem;">Event Tertentu</h2>
+      <p style="color:var(--text-secondary);font-size:0.87rem;margin:0 0 14px;">Pilih satu event sekolah untuk mengunduh seluruh pendaftar pada semua cabang di event tersebut.</p>
+      <form method="GET" action="{{ url_for('admin.export_download') }}" id="formExportEvent">
+        <select name="event_id" class="glass-select" required>
+          {% for ev in events %}
+            <option value="{{ ev.id }}">{{ ev.name }} ({{ ev.participant_count }} peserta)</option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
+    <button type="submit" form="formExportEvent" class="btn-glass btn-primary" style="width:100%;">Unduh Excel Event (.xlsx)</button>
+  </div>
+
+  <!-- Option 3: Specific Competition -->
+  <div class="glass-panel glass-hover card-pad" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;">
+    <div>
+      <div class="page-eyebrow">EKSPOR PER CABANG</div>
+      <h2 style="margin:0 0 8px;font-size:1.3rem;">Cabang Lomba Tertentu</h2>
+      <p style="color:var(--text-secondary);font-size:0.87rem;margin:0 0 14px;">Cocok untuk lembar absensi juri atau wasit pada satu cabang lomba individu maupun tim.</p>
+      <form method="GET" action="{{ url_for('admin.export_download') }}" id="formExportComp">
+        <select name="competition_id" class="glass-select" required>
+          {% for c in competitions %}
+            <option value="{{ c.id }}">{{ c.event_name }} — {{ c.name }} ({{ c.registered_count }})</option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
+    <button type="submit" form="formExportComp" class="btn-glass btn-primary" style="width:100%;">Unduh Excel Cabang (.xlsx)</button>
+  </div>
+</div>
+
+<!-- Columns preview info -->
+<div class="glass-panel card-pad" style="margin-top:22px;">
+  <h3 style="margin:0 0 10px;font-size:1.05rem;">Kolom Data yang Termasuk di File Excel</h3>
+  <div class="event-chip-row">
+    <span class="glass-chip">No & Kode Daftar</span>
+    <span class="glass-chip">Nama Event</span>
+    <span class="glass-chip">Cabang Lomba & Tipe</span>
+    <span class="glass-chip">Nama Peserta</span>
+    <span class="glass-chip">NIS & Kelas</span>
+    <span class="glass-chip">Nama Tim</span>
+    <span class="glass-chip">Ketua Tim</span>
+    <span class="glass-chip">Daftar Anggota Tim (Nama & NIS)</span>
+    <span class="glass-chip">Waktu Pendaftaran</span>
+    <span class="glass-chip">Status (Berwarna)</span>
+    <span class="glass-chip">+ Sheet Ringkasan Otomatis</span>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Events — Lombaku{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-eyebrow">KALENDER KOMPETISI SEKOLAH</div>
+    <h1 class="page-title">Semua Event Perlombaan</h1>
+    <p class="page-subtitle">Pilih event untuk melihat jadwal lengkap, juknis cabang lomba, jumlah pendaftar, dan mengakses bracket pertandingan.</p>
+  </div>
+  <a href="{{ url_for('public.register_page') }}" class="btn-glass btn-primary">Daftar Lomba Sekarang</a>
+</div>
+
+<div class="grid-3">
+  {% for ev in events %}
+  <article class="glass-panel glass-hover event-card">
+    <div>
+      <div class="event-card-top">
+        <div>
+          <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent-cyan);margin-bottom:4px;">Event #{{ loop.index }}</div>
+          <h2 style="margin:0;font-size:1.4rem;letter-spacing:-0.02em;">{{ ev.name }}</h2>
+          <div style="font-size:0.84rem;color:var(--text-secondary);margin-top:2px;">{{ ev.subtitle }}</div>
+        </div>
+        <span class="status-badge status-{{ ev.effective_status|lower }}">
+          <span class="status-dot"></span> {{ ev.effective_status }}
+        </span>
+      </div>
+
+      <p style="font-size:0.87rem;color:var(--text-secondary);margin:14px 0 0;line-height:1.6;">
+        {{ ev.description }}
+      </p>
+
+      <div class="event-chip-row">
+        <span class="glass-chip">{{ ev.competition_count }} Cabang</span>
+        <span class="glass-chip">{{ ev.participant_count }} Peserta</span>
+        {% if ev.live_match_count > 0 %}
+          <span class="glass-chip" style="border-color:rgba(245,181,68,0.4);color:#fde68a;">● {{ ev.live_match_count }} Live</span>
+        {% endif %}
+      </div>
+
+      <div class="divider-line"></div>
+
+      <div style="font-size:0.8rem;color:var(--text-muted);display:flex;flex-direction:column;gap:5px;">
+        <div><strong style="color:var(--text-secondary);">Pelaksanaan:</strong> {{ ev.event_date_label }}</div>
+        <div><strong style="color:var(--text-secondary);">Batas Daftar:</strong> {{ ev.deadline_label }}</div>
+        <div><strong style="color:var(--text-secondary);">Status:</strong> {{ ev.status_reason }}</div>
+      </div>
+
+      {% if ev.competitions %}
+      <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:6px;">
+        {% for c in ev.competitions %}
+          <span class="glass-chip" style="font-size:0.72rem;">{{ c.name }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+      <a href="{{ url_for('public.event_detail', slug=ev.slug) }}" class="btn-glass" style="flex:1;">Detail & Juknis</a>
+      {% if ev.can_register %}
+        <a href="{{ url_for('public.register_page', event_id=ev.id) }}" class="btn-glass btn-primary" style="flex:1;">Daftar</a>
+      {% else %}
+        <span class="btn-glass is-disabled" style="flex:1;">{{ ev.effective_status }}</span>
+      {% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}
