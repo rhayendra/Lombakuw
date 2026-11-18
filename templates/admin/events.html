@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+{% block title %}Competition Management — Lombaku{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-eyebrow">MANAJEMEN EVENT & CABANG LOMBA</div>
+    <h1 class="page-title">Competition Management</h1>
+    <p class="page-subtitle">Edit informasi, jadwal, juknis, dan batas pendaftaran 3 event utama, serta tambah, ubah, atau hapus cabang lomba individu & tim.</p>
+  </div>
+  <button type="button" class="btn-glass btn-primary" onclick="LombakuUI.openModal('modalAddComp')">+ Tambah Cabang Lomba</button>
+</div>
+
+{% for ev in events %}
+<section class="glass-panel card-pad" style="margin-bottom:22px;">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:14px;">
+    <div>
+      <div style="font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent-cyan);">EVENT UTAMA #{{ loop.index }}</div>
+      <h2 style="margin:2px 0 0;font-size:1.35rem;">{{ ev.name }} — <span style="font-weight:400;color:var(--text-secondary);">{{ ev.subtitle }}</span></h2>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <span class="status-badge status-{{ ev.effective_status|lower }}"><span class="status-dot"></span> Efektif: {{ ev.effective_status }}</span>
+      <button type="button" class="btn-glass btn-sm" onclick="LombakuUI.openModal('modalEditEvent{{ ev.id }}')">Edit Event & Juknis</button>
+    </div>
+  </div>
+
+  <div class="event-chip-row" style="margin-bottom:16px;">
+    <span class="glass-chip">Pelaksanaan: {{ ev.event_date_label }}</span>
+    <span class="glass-chip">Batas Daftar: {{ ev.deadline_label }}</span>
+    <span class="glass-chip">{{ ev.participant_count }} Pendaftar</span>
+    <span class="glass-chip">{{ ev.status_reason }}</span>
+  </div>
+
+  <!-- Tabel Cabang Lomba dalam Event -->
+  <div class="table-wrap">
+    <table class="glass-table">
+      <thead>
+        <tr>
+          <th>Cabang Lomba</th>
+          <th>Tipe & Aturan Tim</th>
+          <th>Kuota</th>
+          <th>Jadwal & Lokasi</th>
+          <th style="text-align:right;">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in ev.competitions %}
+        <tr>
+          <td>
+            <strong>{{ c.name }}</strong>
+            <div style="font-size:0.75rem;color:var(--text-muted);">{{ c.category }}</div>
+          </td>
+          <td>
+            {% if c.comp_type == 'TEAM' %}
+              <span class="status-badge status-live">Tim ({{ c.min_members }}–{{ c.max_members }} org)</span>
+              {% if c.same_class_required %}<div style="font-size:0.72rem;color:#fde68a;margin-top:3px;">Wajib 1 Kelas</div>{% endif %}
+            {% else %}
+              <span class="status-badge status-registered">Individu</span>
+            {% endif %}
+          </td>
+          <td>{{ c.registered_count }} / {{ c.max_slots }}</td>
+          <td>
+            <div>{{ c.schedule_info or '-' }}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">{{ c.venue or '-' }}</div>
+          </td>
+          <td style="text-align:right;white-space:nowrap;">
+            <a href="{{ url_for('admin.bracket_control', competition_id=c.id) }}" class="btn-glass btn-sm">Bracket</a>
+            <button type="button" class="btn-glass btn-sm" onclick="LombakuUI.openModal('modalEditComp{{ c.id }}')">Edit</button>
+            <form method="POST" action="{{ url_for('admin.delete_competition', comp_id=c.id) }}" style="display:inline;" onsubmit="return confirm('Hapus cabang {{ c.name }} beserta data pesertanya?');">
+              <button type="submit" class="btn-glass btn-sm btn-danger">Hapus</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Belum ada cabang lomba pada event ini.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Modal Edit Event -->
+<div id="modalEditEvent{{ ev.id }}" class="modal-backdrop">
+  <div class="glass-panel modal-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3 style="margin:0;">Edit Event: {{ ev.name }}</h3>
+      <button type="button" class="btn-glass btn-sm" data-close-modal>✕</button>
+    </div>
+    <form method="POST" action="{{ url_for('admin.update_event', event_id=ev.id) }}" class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Nama Event</label>
+        <input type="text" name="name" class="glass-input" value="{{ ev.name }}" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status Manual Event</label>
+        <select name="status" class="glass-select">
+          <option value="OPEN" {% if ev.manual_status == 'OPEN' %}selected{% endif %}>OPEN (Pendaftaran Dibuka)</option>
+          <option value="ONGOING" {% if ev.manual_status == 'ONGOING' %}selected{% endif %}>ONGOING (Sedang Berlangsung)</option>
+          <option value="LOCKED" {% if ev.manual_status == 'LOCKED' %}selected{% endif %}>LOCKED (Dikunci)</option>
+          <option value="COMPLETED" {% if ev.manual_status == 'COMPLETED' %}selected{% endif %}>COMPLETED (Selesai)</option>
+          <option value="CLOSED" {% if ev.manual_status == 'CLOSED' %}selected{% endif %}>CLOSED (Ditutup)</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Subjudul Singkat</label>
+        <input type="text" name="subtitle" class="glass-input" value="{{ ev.subtitle }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tanggal Pelaksanaan</label>
+        <input type="datetime-local" name="event_date" class="glass-input" value="{{ ev.event_date[:16] }}" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Buka Pendaftaran</label>
+        <input type="datetime-local" name="registration_open" class="glass-input" value="{{ ev.registration_open[:16] }}" required>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Batas Akhir Pendaftaran (Auto-Lock)</label>
+        <input type="datetime-local" name="registration_deadline" class="glass-input" value="{{ ev.registration_deadline[:16] }}" required>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Deskripsi Event</label>
+        <textarea name="description" class="glass-textarea">{{ ev.description }}</textarea>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Jadwal Rangkaian Kegiatan</label>
+        <textarea name="schedule_text" class="glass-textarea">{{ ev.schedule_text }}</textarea>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Juknis Umum Event</label>
+        <textarea name="juknis" class="glass-textarea">{{ ev.juknis }}</textarea>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Informasi Kontak Panitia</label>
+        <input type="text" name="committee_info" class="glass-input" value="{{ ev.committee_info }}">
+      </div>
+      <div class="form-group full" style="flex-direction:row;justify-content:flex-end;gap:10px;">
+        <button type="button" class="btn-glass" data-close-modal>Batal</button>
+        <button type="submit" class="btn-glass btn-primary">Simpan Perubahan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modals Edit Each Competition -->
+{% for c in ev.competitions %}
+<div id="modalEditComp{{ c.id }}" class="modal-backdrop">
+  <div class="glass-panel modal-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3 style="margin:0;">Edit Cabang: {{ c.name }}</h3>
+      <button type="button" class="btn-glass btn-sm" data-close-modal>✕</button>
+    </div>
+    <form method="POST" action="{{ url_for('admin.update_competition', comp_id=c.id) }}" class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Nama Cabang</label>
+        <input type="text" name="name" class="glass-input" value="{{ c.name }}" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kategori</label>
+        <input type="text" name="category" class="glass-input" value="{{ c.category }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipe Lomba</label>
+        <select name="comp_type" class="glass-select">
+          <option value="INDIVIDUAL" {% if c.comp_type == 'INDIVIDUAL' %}selected{% endif %}>Individu</option>
+          <option value="TEAM" {% if c.comp_type == 'TEAM' %}selected{% endif %}>Tim / Beregu</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Maksimal Slot Peserta</label>
+        <input type="number" min="2" name="max_slots" class="glass-input" value="{{ c.max_slots }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Minimal Anggota (Tim)</label>
+        <input type="number" min="1" name="min_members" class="glass-input" value="{{ c.min_members }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Maksimal Anggota (Tim)</label>
+        <input type="number" min="1" name="max_members" class="glass-input" value="{{ c.max_members }}">
+      </div>
+      <div class="form-group full" style="flex-direction:row;align-items:center;gap:10px;">
+        <input type="checkbox" id="sameClass{{ c.id }}" name="same_class_required" value="1" {% if c.same_class_required %}checked{% endif %}>
+        <label for="sameClass{{ c.id }}" class="form-label" style="margin:0;">Wajib seluruh anggota tim berasal dari kelas yang sama</label>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Jadwal Singkat</label>
+        <input type="text" name="schedule_info" class="glass-input" value="{{ c.schedule_info }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Lokasi / Venue</label>
+        <input type="text" name="venue" class="glass-input" value="{{ c.venue }}">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Deskripsi</label>
+        <textarea name="description" class="glass-textarea" style="min-height:68px;">{{ c.description }}</textarea>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Juknis & Kisi-kisi Cabang</label>
+        <textarea name="juknis" class="glass-textarea">{{ c.juknis }}</textarea>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Persyaratan Tambahan</label>
+        <input type="text" name="requirements" class="glass-input" value="{{ c.requirements }}">
+      </div>
+      <div class="form-group full" style="flex-direction:row;justify-content:flex-end;gap:10px;">
+        <button type="button" class="btn-glass" data-close-modal>Batal</button>
+        <button type="submit" class="btn-glass btn-primary">Simpan Cabang</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endfor %}
+{% endfor %}
+
+<!-- Modal Add New Competition -->
+<div id="modalAddComp" class="modal-backdrop">
+  <div class="glass-panel modal-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3 style="margin:0;">Tambah Cabang Lomba Baru</h3>
+      <button type="button" class="btn-glass btn-sm" data-close-modal>✕</button>
+    </div>
+    <form method="POST" action="{{ url_for('admin.create_competition') }}" class="form-grid">
+      <div class="form-group full">
+        <label class="form-label">Pilih Event Induk</label>
+        <select name="event_id" class="glass-select" required>
+          {% for ev in events %}
+            <option value="{{ ev.id }}">{{ ev.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nama Cabang Lomba</label>
+        <input type="text" name="name" class="glass-input" placeholder="Contoh: Basket 3x3" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kategori</label>
+        <input type="text" name="category" class="glass-input" placeholder="Olahraga / Seni / Akademik" value="Umum">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipe Lomba</label>
+        <select name="comp_type" class="glass-select">
+          <option value="INDIVIDUAL">Individu</option>
+          <option value="TEAM">Tim / Beregu</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kuota Maksimal</label>
+        <input type="number" min="2" name="max_slots" class="glass-input" value="16">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Min. Anggota (jika Tim)</label>
+        <input type="number" min="1" name="min_members" class="glass-input" value="3">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Max. Anggota (jika Tim)</label>
+        <input type="number" min="1" name="max_members" class="glass-input" value="5">
+      </div>
+      <div class="form-group full" style="flex-direction:row;align-items:center;gap:10px;">
+        <input type="checkbox" id="newSameClass" name="same_class_required" value="1">
+        <label for="newSameClass" class="form-label" style="margin:0;">Wajib seluruh anggota tim dari kelas yang sama</label>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Jadwal</label>
+        <input type="text" name="schedule_info" class="glass-input" placeholder="Hari 1 · 09:00 WIB">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Lokasi</label>
+        <input type="text" name="venue" class="glass-input" placeholder="Lapangan Utama / Aula">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Deskripsi Singkat</label>
+        <textarea name="description" class="glass-textarea" style="min-height:68px;" placeholder="Jelaskan format perlombaan..."></textarea>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Juknis & Kisi-kisi</label>
+        <textarea name="juknis" class="glass-textarea" placeholder="Tuliskan aturan teknis & kriteria penilaian..."></textarea>
+      </div>
+      <div class="form-group full" style="flex-direction:row;justify-content:flex-end;gap:10px;">
+        <button type="button" class="btn-glass" data-close-modal>Batal</button>
+        <button type="submit" class="btn-glass btn-primary">Tambahkan Cabang</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

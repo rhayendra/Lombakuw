@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Informasi & Jadwal — Lombaku{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-eyebrow">PUSAT INFORMASI LOMBA SEKOLAH</div>
+    <h1 class="page-title">Panduan, Jadwal & Kontak Panitia</h1>
+    <p class="page-subtitle">Semua informasi penting perlombaan sekolah dalam satu tempat — bebas brosur hilang dan pendaftaran manual.</p>
+  </div>
+</div>
+
+<!-- Quick Status Check -->
+<div class="glass-panel card-pad" style="margin-bottom:22px;">
+  <h2 style="margin:0 0 6px;font-size:1.15rem;">Cek Cepat Status Pendaftaran</h2>
+  <p style="margin:0 0 14px;font-size:0.86rem;color:var(--text-secondary);">Masukkan NIS (misal <code>240101</code> atau <code>250101</code>) atau Kode Pendaftaran untuk melihat status verifikasi panitia.</p>
+  <form method="GET" action="{{ url_for('public.info_page') }}" style="display:flex;gap:10px;flex-wrap:wrap;">
+    <input type="text" name="q" value="{{ search_query }}" class="glass-input" placeholder="Cari berdasarkan NIS atau Kode Daftar..." style="flex:1;min-width:220px;">
+    <button type="submit" class="btn-glass btn-primary">Cari Data</button>
+  </form>
+
+  {% if search_query %}
+    <div style="margin-top:14px;">
+      {% if lookup_results %}
+        <div class="grid-2">
+          {% for item in lookup_results %}
+          <div class="glass-sub card-pad-sm">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+              <div>
+                <strong>{{ item.team_name or item.participant_name }}</strong>
+                <div style="font-size:0.8rem;color:var(--text-secondary);">{{ item.event_name }} · {{ item.competition_name }}</div>
+              </div>
+              <span class="status-badge status-{{ item.status|lower }}"><span class="status-dot"></span> {{ item.status }}</span>
+            </div>
+            <div class="event-chip-row">
+              <span class="glass-chip">{{ item.registration_code }}</span>
+              <span class="glass-chip">NIS: {{ item.nis }}</span>
+              <span class="glass-chip">{{ item.kelas }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert-glass alert-warning">Data pendaftaran untuk <strong>{{ search_query }}</strong> tidak ditemukan.</div>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+<div class="grid-2" style="margin-bottom:22px;">
+  <!-- Alur Pendaftaran -->
+  <div class="glass-panel card-pad">
+    <h3 style="margin:0 0 12px;font-size:1.1rem;">Alur Pendaftaran Siswa</h3>
+    <ol style="margin:0;padding-left:20px;color:var(--text-secondary);font-size:0.9rem;display:flex;flex-direction:column;gap:10px;">
+      <li>Pilih event aktif (Bulan Bahasa, PORAK, atau 17 Agustus) di menu <strong>Events</strong> atau <strong>Registration</strong>.</li>
+      <li>Pilih cabang lomba <strong>Individu</strong> atau <strong>Tim</strong> yang diinginkan.</li>
+      <li><strong>Wajib</strong> membaca Tab Juknis & Kisi-kisi hingga tuntas lalu klik tombol konfirmasi untuk membuka formulir.</li>
+      <li>Lengkapi data NIS, Kelas, dan anggota tim (jika lomba beregu). Sistem otomatis mengecek agar 1 siswa hanya terdaftar di 1 cabang per event.</li>
+      <li>Simpan Kode Pendaftaran dan pantau jadwal serta bagan pertandingan di menu <strong>Match Bracket</strong>.</li>
+    </ol>
+  </div>
+
+  <!-- Kontak Panitia & Pengumuman -->
+  <div class="glass-panel card-pad">
+    <h3 style="margin:0 0 12px;font-size:1.1rem;">Pengumuman & Kontak Panitia</h3>
+    <div class="alert-glass" style="margin-bottom:14px;">
+      <span>◈</span>
+      <div>{{ school_settings.announcement }}</div>
+    </div>
+    <div class="glass-sub card-pad-sm" style="margin-bottom:12px;">
+      <div style="font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-cyan);">Sekolah</div>
+      <div style="font-weight:600;margin-top:2px;">{{ school_settings.school_name }}</div>
+      <div style="font-size:0.84rem;color:var(--text-secondary);">{{ school_settings.committee_contact }}</div>
+    </div>
+    <a href="{{ url_for('admin.login') }}" class="btn-glass btn-sm">Masuk ke Panel Panitia →</a>
+  </div>
+</div>
+
+<!-- Ringkasan Jadwal Semua Event -->
+<div class="glass-panel card-pad">
+  <h3 style="margin:0 0 16px;font-size:1.15rem;">Ringkasan Jadwal Event Sekolah</h3>
+  <div class="grid-3">
+    {% for ev in events %}
+    <div class="glass-sub card-pad-sm">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;">
+        <strong>{{ ev.name }}</strong>
+        <span class="status-badge status-{{ ev.effective_status|lower }}">{{ ev.effective_status }}</span>
+      </div>
+      <div style="font-size:0.78rem;color:var(--accent-cyan);margin-bottom:8px;">{{ ev.event_date_label }}</div>
+      <div style="white-space:pre-line;font-size:0.8rem;color:var(--text-secondary);line-height:1.55;">{{ ev.schedule_text }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

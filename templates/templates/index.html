@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LombaKu — Portal Kompetisi &amp; Kejuaraan Sekolah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body data-page="home">
+
+  <!-- Top Navigation Bar -->
+  <header class="masthead">
+    <div class="masthead-top">
+      <div class="container masthead-top-inner">
+        <span id="topAuthBanner">PORTAL KOMPETISI RESMI SEKOLAH &bull; LOMBAKU PYTHON &amp; SQLITE EDITION</span>
+        <span id="serverClockBanner">Memuat waktu server...</span>
+      </div>
+    </div>
+    <div class="container masthead-nav">
+      <a href="/" class="brand">
+        <div class="brand-crest-3d" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <path d="M9 7H23V13C23 16.866 19.866 20 16 20C12.134 20 9 16.866 9 13V7Z" fill="#FEF08A"/>
+            <path d="M9 9H6C5.4 9 5 9.5 5 10.2C5 13 6.8 14.8 9 15" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+            <path d="M23 9H26C26.6 9 27 9.5 27 10.2C27 13 25.2 14.8 23 15" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+            <path d="M16 20V25M11.5 25H20.5" stroke="#FDE047" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="brand-title">
+          <h1>LombaKu</h1>
+          <span>School Competition Hub</span>
+        </div>
+      </a>
+
+      <nav class="nav-actions">
+        <a href="/" class="btn btn-ghost">Home</a>
+        <a href="/daftar" class="btn btn-ghost" id="navBtnDaftar">Event</a>
+        <a href="#jadwalSection" class="btn btn-ghost">Jadwal</a>
+        <a href="#bracketSection" class="btn btn-ghost">Bagan</a>
+        <div id="navParticipantZone" style="display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <a href="/peserta" class="btn btn-hunter">Profil / Masuk</a>
+        </div>
+        <button class="btn btn-outline" id="btnNavPanitia" onclick="openPanitiaPortal()">Panitia</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero & Explore Section (Inspired by the 2 Mobile App Screens in Reference) -->
+  <section class="editorial-hero">
+    <div class="container">
+      <div class="explore-showcase-grid">
+
+        <!-- Left Showcase: Tall Scenic Illustrated Hero Banner -->
+        <div class="scenic-hero-banner">
+          <!-- Full Scenic Vector/3D Layered Championship Pavilion Illustration -->
+          <svg class="scenic-hero-art" viewBox="0 0 500 650" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="skyBg" x1="0" y1="0" x2="500" y2="650" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#0A75C2"/>
+                <stop offset="0.48" stop-color="#35C6E8"/>
+                <stop offset="0.82" stop-color="#8AEAF9"/>
+                <stop offset="1" stop-color="#0E3B68"/>
+              </linearGradient>
+              <linearGradient id="hillDeep" x1="250" y1="360" x2="250" y2="650" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#114B7E"/>
+                <stop offset="1" stop-color="#072342"/>
+              </linearGradient>
+              <linearGradient id="roofCrimson" x1="200" y1="140" x2="460" y2="320" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9E1B42"/>
+                <stop offset="1" stop-color="#5B0E2D"/>
+              </linearGradient>
+              <linearGradient id="wallIvory" x1="240" y1="180" x2="480" y2="410" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#FFFFFF"/>
+                <stop offset="1" stop-color="#CBDDF2"/>
+              </linearGradient>
+            </defs>
+
+            <rect width="500" height="650" fill="url(#skyBg)"/>
+
+            <!-- Diagonal Soft Cyan & Sky Light Beams -->
+            <path d="M-40 260L420 -40H540L20 340Z" fill="rgba(255,255,255,0.16)"/>
+            <path d="M40 390L540 30V150L120 450Z" fill="rgba(255,255,255,0.12)"/>
+
+            <!-- Soft Pastel Clouds -->
+            <path d="M-10 190C15 160 65 165 82 195C110 175 155 190 160 225H-10V190Z" fill="rgba(255,255,255,0.75)"/>
+            <circle cx="155" cy="245" r="24" fill="rgba(255,255,255,0.22)"/>
+            <circle cx="190" cy="225" r="14" fill="rgba(255,255,255,0.28)"/>
+
+            <!-- Distant Mint & Azure Hills -->
+            <path d="M-20 430Q110 370 250 415T520 390V520H-20Z" fill="#7CD9CB" opacity="0.7"/>
+
+            <!-- Multi-Tiered Championship Pavilion / Castle on the Right -->
+            <!-- Tier 3 (Top) -->
+            <polygon points="315,175 490,175 470,235 335,235" fill="url(#wallIvory)"/>
+            <path d="M285 182L405 128L515 182L492 192L405 148L310 192Z" fill="#0E4F68"/>
+            <path d="M305 188L405 144L500 188Z" fill="url(#roofCrimson)"/>
+            <rect x="362" y="196" width="14" height="18" rx="2" fill="#2A7DE1"/>
+            <rect x="398" y="196" width="14" height="18" rx="2" fill="#2A7DE1"/>
+            <rect x="434" y="196" width="14" height="18" rx="2" fill="#2A7DE1"/>
+
+            <!-- Tier 2 (Middle) -->
+            <polygon points="275,250 495,250 480,325 290,325" fill="url(#wallIvory)"/>
+            <path d="M242 258L395 198L520 258L495 270L395 220L268 270Z" fill="#0E4F68"/>
+            <path d="M262 266L395 215L505 266Z" fill="url(#roofCrimson)"/>
+            <rect x="320" y="278" width="16" height="22" rx="2" fill="#2A7DE1"/>
+            <rect x="364" y="278" width="16" height="22" rx="2" fill="#2A7DE1"/>
+            <rect x="408" y="278" width="16" height="22" rx="2" fill="#2A7DE1"/>
+
+            <!-- Tier 1 (Base Pavilion) -->
+            <polygon points="215,335 495,335 485,435 230,435" fill="url(#wallIvory)"/>
+            <path d="M185 352L305 288L455 348L305 312L210 362Z" fill="#0E4F68"/>
+            <rect x="262" y="366" width="16" height="24" rx="2" fill="#2A7DE1"/>
+            <rect x="304" y="366" width="16" height="24" rx="2" fill="#2A7DE1"/>
+            <rect x="380" y="366" width="16" height="24" rx="2" fill="#2A7DE1"/>
+            <rect x="420" y="366" width="16" height="24" rx="2" fill="#2A7DE1"/>
+
+            <!-- Deep Ocean Blue Foreground Hill -->
+            <path d="M-20 455C95 435 195 390 325 395C410 398 470 420 520 440V660H-20V455Z" fill="url(#hillDeep)"/>
+            <path d="M90 650C140 530 230 455 340 410" stroke="rgba(255,255,255,0.08)" stroke-width="28" stroke-linecap="round"/>
+
+            <!-- Soft Pink Blossom Petals Accent (Bottom Right) -->
+            <ellipse cx="475" cy="545" rx="38" ry="18" transform="rotate(-18 475 545)" fill="#FF6F91"/>
+            <ellipse cx="445" cy="568" rx="34" ry="15" transform="rotate(8 445 568)" fill="#FF94B2"/>
+          </svg>
+
+          <div class="scenic-hero-content">
+            <span class="scenic-hero-tag">✨ Edisi Kejuaraan Sekolah</span>
+            <h2>Semarak Prestasi di LombaKu</h2>
+            <p>
+              Temukan bakat terbaikmu di Bulan Bahasa, PORAK, dan 17 Agustus.
+              Pelajari juknis resmi, daftar secara instan, dan pantau bagan kejuaraan langsung dari genggamanmu!
+            </p>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <a href="/daftar" class="btn btn-white-pill">Mulai Daftar</a>
+              <a href="/peserta" class="btn btn-parchment" id="heroBtnPeserta" style="background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.35);">Kartu Peserta</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Showcase: Clean "Explore" Interface -->
+        <div class="explore-surface">
+          <div>
+            <!-- Explore Top Header + Notification Bell -->
+            <div class="explore-header-row">
+              <h2>Explore</h2>
+              <button type="button" class="bell-icon-btn" onclick="scrollToEl('jadwalSection')" title="Lihat Jadwal & Hitung Mundur Event">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                </svg>
+              </button>
+            </div>
+
+            <div id="homeLoggedStudentAlert" style="display: none;" class="alert-box alert-hunter"></div>
+
+            <!-- Rounded Search Bar with Deep Violet Circular Search Button -->
+            <form class="explore-search-bar" onsubmit="handleExploreSearch(event)">
+              <input
+                type="text"
+                id="exploreSearchInput"
+                placeholder="Cari cabang lomba, event, atau peserta..."
+                oninput="filterRecommendedCards(this.value)"
+              >
+              <button type="submit" class="explore-search-submit" aria-label="Cari Lomba">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <circle cx="11" cy="11" r="7"/>
+                  <path d="M20 20L16.5 16.5"/>
+                </svg>
+              </button>
+            </form>
+
+            <!-- Pastel Category / Event Pills ("Tokyo", "Shibuya", "Yokohama" style) -->
+            <div class="pastel-pills-row" id="exploreEventPills">
+              <button type="button" class="pastel-cat-pill pill-cyan active" onclick="filterExploreByEvent('all', this)">
+                <span class="pill-icon-circle">✦</span>
+                <span>Semua</span>
+              </button>
+              <button type="button" class="pastel-cat-pill pill-cyan" onclick="filterExploreByEvent('bulan-bahasa', this)">
+                <span class="pill-icon-circle">➤</span>
+                <span>Bulan Bahasa</span>
+              </button>
+              <button type="button" class="pastel-cat-pill pill-violet" onclick="filterExploreByEvent('porak', this)">
+                <span class="pill-icon-circle">★</span>
+                <span>PORAK</span>
+              </button>
+              <button type="button" class="pastel-cat-pill pill-pink" onclick="filterExploreByEvent('17-agustus', this)">
+                <span class="pill-icon-circle">♥</span>
+                <span>17 Agustus</span>
+              </button>
+            </div>
+
+            <!-- "Recommended" Tall Illustrated Competition Cards -->
+            <div class="recommended-head">
+              <h3>Rekomendasi Lomba</h3>
+              <span class="badge badge-brass" id="ledgerParticipantBadge">0 Terdaftar</span>
+            </div>
+            <div class="recommended-cards-scroll" id="recommendedCompsGrid">
+              <!-- Populated dynamically with scenic SVG art cards -->
+            </div>
+          </div>
+
+          <!-- Bottom of Explore Card: Activity & Statistics ("Local Reviews" style) -->
+          <div>
+            <div class="recommended-head" style="margin-bottom: 8px;">
+              <h3>Statistik &amp; Pendaftar Terbaru</h3>
+              <span style="font-size: 12px; color: var(--violet-main); font-weight: 700;" id="heroCompCountTxt">9 Cabang Aktif</span>
+            </div>
+            <div id="recentReviewsList">
+              <!-- Populated dynamically with participant avatar, stars, and competition -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Jadwal & Countdown Section -->
+      <div class="open-schedule-strip" id="jadwalSection">
+        <div class="ledger-head">
+          <h3>
+            <span style="display:inline-flex;width:10px;height:10px;border-radius:50%;background:var(--violet-main);"></span>
+            Informasi Jadwal &amp; Hitung Mundur 3 Event Utama
+          </h3>
+          <span style="font-size: 12px; color: var(--text-muted);" id="heroEventCountTxt">
+            Aturan: 1 siswa maksimal 1 cabang per event &bull; Otomatis terkunci saat jadwal tutup tiba
+          </span>
+        </div>
+        <div class="ledger-list" id="heroLedgerList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content: Daftar Event, Cabang Lomba & Juknis -->
+  <main class="container">
+    <section class="workspace-section" id="workspaceSection">
+      <div class="open-section-head">
+        <div>
+          <div class="issue-tag">Katalog Event &amp; Persyaratan</div>
+          <h3>Jelajahi Event &amp; Kisi-Kisi Cabang Lomba</h3>
+          <p>Pilih salah satu dari tiga event utama di bawah untuk melihat persyaratan teknis, jadwal, dan mendaftar.</p>
+        </div>
+      </div>
+
+      <!-- 3 Main Events Selector -->
+      <div class="event-ribbon" id="eventRibbon"></div>
+
+      <!-- Split Workspace: Competition List + Detail/Juknis -->
+      <div class="split-workspace">
+        <aside class="catalog-panel">
+          <div class="catalog-head">
+            <h3 id="catalogEventTitle">Daftar Cabang Lomba</h3>
+            <div id="catalogEventMeta" style="font-size: 12.5px; color: var(--violet-main); margin-top: 4px; font-weight: 700;"></div>
+          </div>
+          <div class="catalog-list" id="catalogList"></div>
+        </aside>
+
+        <div class="detail-panel" id="detailPanel">
+          <div class="detail-header">
+            <div>
+              <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 10px; flex-wrap: wrap;">
+                <span class="badge badge-brass" id="wsEventBadge">EVENT</span>
+                <span class="badge badge-brass" id="wsCatBadge">KATEGORI</span>
+                <span class="badge badge-open" id="wsStatusBadge">AVAILABLE</span>
+              </div>
+              <h3 id="wsCompTitle">Pilih Cabang Lomba</h3>
+            </div>
+            <div style="font-size: 13px; color: var(--violet-main); font-weight: 800;" id="wsCountLabel"></div>
+          </div>
+
+          <div class="detail-tabs">
+            <button type="button" class="detail-tab active" id="wsTabJuknis" onclick="switchHomeCompTab('juknis')">
+              01. Persyaratan &amp; Juknis Resmi
+            </button>
+            <button type="button" class="detail-tab" id="wsTabBracket" onclick="switchHomeCompTab('bracket')">
+              02. Pratinjau Bagan Cabang Ini
+            </button>
+          </div>
+
+          <div class="detail-body">
+            <div id="wsPanelJuknis">
+              <div class="alert-box alert-hunter">
+                <strong>Informasi Persyaratan:</strong> Pelajari juknis resmi di bawah ini sebelum mendaftar dan mendapatkan Kartu Peserta Digital Anda secara otomatis.
+              </div>
+              <div class="juknis-paper" id="wsJuknisContent"></div>
+              <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <a href="/daftar" id="btnGoToDedicatedDaftar" class="btn btn-hunter" style="flex: 1; padding: 13px 22px;">
+                  Daftar Cabang Ini Sekarang &rarr;
+                </a>
+                <button type="button" class="btn btn-parchment" onclick="switchHomeCompTab('bracket')">
+                  Lihat Bagan Cabang Ini
+                </button>
+              </div>
+            </div>
+
+            <div id="wsPanelBracket" style="display: none;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                <span style="font-size: 13.5px; color: var(--text-body);">Pratinjau langsung bagan <strong style="color:var(--text-dark);" id="wsBracketTitle"></strong></span>
+                <button type="button" class="btn btn-parchment btn-sm" onclick="syncMainBracketToCurrent()">Buka di Tampilan Penuh &darr;</button>
+              </div>
+              <div id="wsBracketContainer"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Full-Width Tournament Bracket Showcase -->
+    <section class="bracket-showcase" id="bracketSection">
+      <div class="bracket-bar">
+        <div>
+          <div class="issue-tag">Turnamen Langsung</div>
+          <h3 style="font-size: clamp(22px, 2.8vw, 28px); font-weight: 800; color: var(--text-dark);">Bagan Pertandingan &amp; Perkembangan Juara</h3>
+          <p style="font-size: 13.5px; color: var(--text-body); margin-top: 4px;" id="mainBracketSub">
+            Pantau bagan setiap cabang secara terbuka. Geser ke samping bila menggunakan smartphone.
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+          <select id="mainBracketSelect" class="form-control" style="width: auto; min-width: 250px;" onchange="renderMainBracket()"></select>
+          <div id="panitiaBracketToolbar" style="display: none; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-hunter btn-sm" onclick="panitiaBracketAction('shuffle')">Shuffle (Acak Bagan)</button>
+            <button class="btn btn-parchment btn-sm" onclick="panitiaBracketAction('reset')">Reset Bagan</button>
+          </div>
+        </div>
+      </div>
+      <div id="mainBracketContainer"></div>
+    </section>
+  </main>
+
+  <!-- Floating Rounded Bottom Navigation Bar (Mobile App Reference Style) -->
+  <nav class="mobile-bottom-nav" aria-label="Navigasi Utama">
+    <a href="/" class="m-nav-item active">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="/daftar" class="m-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="4"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span>Event</span>
+    </a>
+    <a href="#jadwalSection" class="m-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span>Jadwal</span>
+    </a>
+    <a href="/peserta" class="m-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+      <span>Profil</span>
+    </a>
+  </nav>
+
+  <!-- Modal: Panitia Login -->
+  <div class="modal-overlay" id="panitiaLoginModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>Portal Khusus Panitia LombaKu</h3>
+        <button class="close-x" onclick="closeModal('panitiaLoginModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert-box alert-brass">
+          <strong>Info Login Panitia:</strong> Gunakan akun bawaan <strong>panitia</strong> (password: <strong>panitia</strong> atau <strong>lombaku2026</strong>) untuk mengelola event, juknis, bagan, dan ekspor Excel.
+        </div>
+        <form onsubmit="submitPanitiaLogin(event)">
+          <div class="form-group">
+            <label>ID / Username Panitia</label>
+            <input type="text" id="panitiaIdInput" class="form-control mono" placeholder="panitia" autocomplete="off" required>
+          </div>
+          <div class="form-group">
+            <label>Password Panitia</label>
+            <input type="password" id="panitiaPwInput" class="form-control" placeholder="Masukkan password panitia" required>
+          </div>
+          <button type="submit" class="btn btn-hunter" style="width: 100%; padding: 12px;">
+            Verifikasi &amp; Masuk Dashboard Panitia
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full-Screen Panitia Workspace with Minimalist Sidebar -->
+  <div class="modal-overlay panitia-workspace-overlay" id="panitiaDashModal">
+    <div class="panitia-shell">
+      <aside class="panitia-sidebar">
+        <div>
+          <div class="panitia-sidebar-brand">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div class="brand-crest-3d" style="width:36px;height:36px;border-radius:10px;">
+                <span style="font-weight:800;font-size:13px;color:#fff;">LK</span>
+              </div>
+              <div>
+                <div style="font-weight:800;font-size:15px;color:var(--text-dark);">Panel Panitia</div>
+                <div style="font-size:11px;color:var(--violet-main);">LombaKu SQLite Admin</div>
+              </div>
+            </div>
+            <div id="panitiaIdentityLabel" style="font-size:11.5px;color:var(--text-muted);margin-top:6px;"></div>
+          </div>
+
+          <div class="panitia-nav-list">
+            <button type="button" class="panitia-nav-btn active" data-psec="all" onclick="switchPanitiaSection('all', this)">
+              <span>🏠</span> Semua Ringkasan
+            </button>
+            <button type="button" class="panitia-nav-btn" data-psec="events" onclick="switchPanitiaSection('events', this)">
+              <span>⚡</span> Kelola Event &amp; Jadwal
+            </button>
+            <button type="button" class="panitia-nav-btn" data-psec="comps" onclick="switchPanitiaSection('comps', this)">
+              <span>📘</span> Cabang &amp; Juknis
+            </button>
+            <button type="button" class="panitia-nav-btn" data-psec="participants" onclick="switchPanitiaSection('participants', this)">
+              <span>👥</span> Data Peserta &amp; Terbaru
+            </button>
+            <button type="button" class="panitia-nav-btn" onclick="closeModal('panitiaDashModal'); scrollToEl('bracketSection');">
+              <span>🏆</span> Kelola Bagan &amp; Hasil
+            </button>
+            <button type="button" class="panitia-nav-btn" data-psec="admins" onclick="switchPanitiaSection('admins', this)">
+              <span>🛡️</span> Akun Panitia
+            </button>
+          </div>
+        </div>
+
+        <div style="padding-top:16px;border-top:1px solid var(--line-soft);display:flex;flex-direction:column;gap:8px;">
+          <button type="button" class="btn btn-parchment btn-sm" onclick="closeModal('panitiaDashModal')">Tutup Dashboard</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="logoutPanitia()">Keluar Panitia</button>
+        </div>
+      </aside>
+
+      <div class="panitia-main">
+        <div class="panitia-topbar">
+          <div>
+            <div class="issue-tag" style="margin-bottom:4px;">Kontrol Real-Time SQLite</div>
+            <h3 style="font-size:24px;font-weight:800;color:var(--text-dark);">Ruang Kontrol Panitia &mdash; LombaKu</h3>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+            <button class="btn btn-hunter btn-sm" onclick="openModal('addCompModal')">+ Cabang Baru</button>
+            <button class="btn btn-parchment btn-sm" onclick="openModal('addPanitiaModal')">+ Panitia Baru</button>
+            <select id="excelEventFilter" class="form-control" style="width:auto;padding:7px 12px;font-size:12px;">
+              <option value="">Semua Event (Excel)</option>
+              <option value="bulan-bahasa">Bulan Bahasa</option>
+              <option value="porak">PORAK</option>
+              <option value="17-agustus">17 Agustus</option>
+            </select>
+            <button class="btn btn-outline btn-sm" onclick="downloadExcel()">Ekspor Excel (.xlsx)</button>
+            <button class="close-x" onclick="closeModal('panitiaDashModal')" title="Tutup Panel">&times;</button>
+          </div>
+        </div>
+
+        <!-- Statistics Strip -->
+        <div class="panitia-open-stats" id="panitiaOpenStats">
+          <div class="p-stat-open">
+            <div class="p-stat-orb orb-porak">👥</div>
+            <div>
+              <div class="p-stat-num" id="pStatParticipants">0</div>
+              <div class="p-stat-lbl">Total Peserta Terdaftar</div>
+            </div>
+          </div>
+          <div class="p-stat-open">
+            <div class="p-stat-orb orb-bulan-bahasa">⚡</div>
+            <div>
+              <div class="p-stat-num" id="pStatActiveEvents">0 / 3</div>
+              <div class="p-stat-lbl">Event Aktif Terbuka</div>
+            </div>
+          </div>
+          <div class="p-stat-open">
+            <div class="p-stat-orb orb-17-agustus">🎯</div>
+            <div>
+              <div class="p-stat-num" id="pStatComps">0</div>
+              <div class="p-stat-lbl">Cabang Perlombaan</div>
+            </div>
+          </div>
+          <div class="p-stat-open">
+            <div class="p-stat-orb" style="background:linear-gradient(135deg,#10B981,#059669);">🏆</div>
+            <div>
+              <div class="p-stat-num" id="pStatChampions">0</div>
+              <div class="p-stat-lbl">Juara Ditetapkan</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 1: Event Control -->
+        <div class="panitia-section" data-psec-block="events" style="margin-bottom:36px;">
+          <h4 style="font-size:17px;font-weight:800;color:var(--violet-deep);margin-bottom:14px;">
+            1. Pengelolaan Event &amp; Kunci Jadwal (3 Event Utama)
+          </h4>
+          <div class="panitia-grid" id="panitiaEventsControl"></div>
+        </div>
+
+        <!-- Section 2: Competitions Control -->
+        <div class="panitia-section" data-psec-block="comps" style="margin-bottom:36px;">
+          <h4 style="font-size:17px;font-weight:800;color:var(--violet-deep);margin-bottom:14px;">
+            2. Cabang Perlombaan, Status Hasil &amp; Ubah Juknis
+          </h4>
+          <div id="panitiaCompsControl" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:20px;"></div>
+        </div>
+
+        <!-- Section 3: Participants Table -->
+        <div class="panitia-section" data-psec-block="participants" style="margin-bottom:36px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <h4 style="font-size:17px;font-weight:800;color:var(--violet-deep);">
+              3. Rekap Pendaftaran Terbaru &amp; Seluruh Peserta
+            </h4>
+            <span id="panitiaTotalRows" style="font-size:12.5px;color:var(--violet-main);font-weight:700;"></span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID User</th>
+                  <th>Password</th>
+                  <th>Nama Siswa / Tim</th>
+                  <th>Kelas</th>
+                  <th>Event</th>
+                  <th>Cabang Lomba</th>
+                  <th>Kontak</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="panitiaParticipantsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section 4: Panitia Accounts -->
+        <div class="panitia-section" data-psec-block="admins">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+            <h4 style="font-size:17px;font-weight:800;color:var(--violet-deep);">
+              4. Daftar Akun Panitia Terdaftar
+            </h4>
+            <button class="btn btn-hunter btn-sm" onclick="openModal('addPanitiaModal')">+ Tambah Panitia Baru</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Username / ID Panitia</th>
+                  <th>Nama Panitia</th>
+                  <th>Jabatan / Role</th>
+                  <th>Password</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="panitiaAdminsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add Competition -->
+  <div class="modal-overlay" id="addCompModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>Tambah Cabang Lomba Baru</h3>
+        <button class="close-x" onclick="closeModal('addCompModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="submitNewCompetition(event)">
+          <div class="form-group">
+            <label>Pilih Event Utama *</label>
+            <select id="addCompEventId" class="form-control" required>
+              <option value="bulan-bahasa">Bulan Bahasa</option>
+              <option value="porak">PORAK</option>
+              <option value="17-agustus">17 Agustus</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Nama Cabang Lomba *</label>
+            <input type="text" id="addCompName" class="form-control" placeholder="Contoh: Debat Bahasa Indonesia" required>
+          </div>
+          <div class="form-group">
+            <label>Kategori Peserta</label>
+            <input type="text" id="addCompCategory" class="form-control" value="Individu">
+          </div>
+          <div class="form-group group-open-panel">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 6px;">
+              <input type="checkbox" id="addCompIsGroup" onchange="toggleAddCompGroup(this.checked)">
+              <strong>Lomba Beregu / Berkelompok (Wajib Nama Tim)</strong>
+            </label>
+            <div id="addCompGroupMinWrapper" style="display: none; margin-top: 10px;">
+              <label style="font-size: 12px; font-weight: 600;">Minimal Pendaftar dalam 1 Kelompok (termasuk Ketua):</label>
+              <input type="number" id="addCompMinMembers" class="form-control" min="2" max="50" value="2">
+              <small style="color: var(--text-muted); font-size: 11px;">Contoh: Futsal min 5 orang, Tarik Tambang min 8 orang.</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Kisi-Kisi &amp; Juknis Lomba *</label>
+            <textarea id="addCompJuknis" class="form-control" rows="5" placeholder="Tuliskan aturan teknis, durasi, dan kriteria penilaian..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-hunter" style="width: 100%; padding: 12px;">Simpan Cabang Lomba</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Edit Juknis -->
+  <div class="modal-overlay" id="editJuknisModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 id="editJuknisTitle">Ubah Kisi-Kisi &amp; Juknis</h3>
+        <button class="close-x" onclick="closeModal('editJuknisModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="submitEditJuknis(event)">
+          <input type="hidden" id="editJuknisCompId">
+          <div class="form-group">
+            <label>Isi Kisi-Kisi / Juknis</label>
+            <textarea id="editJuknisTextarea" class="form-control" rows="8" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-hunter" style="width: 100%; padding: 12px;">Simpan Perubahan</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add New Panitia Admin -->
+  <div class="modal-overlay" id="addPanitiaModal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>Tambah Akun Panitia Baru</h3>
+        <button class="close-x" onclick="closeModal('addPanitiaModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert-box alert-brass">
+          Akun panitia yang ditambahkan di sini akan langsung tersimpan di database SQLite.
+        </div>
+        <form onsubmit="submitNewPanitiaAdmin(event)">
+          <div class="form-group">
+            <label>Username / ID Panitia *</label>
+            <input type="text" id="newPanitiaId" class="form-control mono" placeholder="Contoh: panitiabahasa / osis02" required>
+          </div>
+          <div class="form-group">
+            <label>Nama Lengkap Panitia / Guru *</label>
+            <input type="text" id="newPanitiaName" class="form-control" placeholder="Contoh: Bu Ratna (Kesiswaan)" required>
+          </div>
+          <div class="form-group">
+            <label>Jabatan / Peran</label>
+            <input type="text" id="newPanitiaRole" class="form-control" placeholder="Contoh: Koordinator Lomba / Juri" value="Panitia Lomba">
+          </div>
+          <div class="form-group">
+            <label>Password Akun Panitia *</label>
+            <input type="password" id="newPanitiaPw" class="form-control mono" placeholder="Tentukan password panitia" required>
+          </div>
+          <button type="submit" class="btn btn-hunter" style="width: 100%; padding: 12px;">
+            Simpan &amp; Aktifkan Akun Panitia
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <footer>
+    <div class="container">
+      <strong>LombaKu</strong> &mdash; Aplikasi Portal Perlombaan Sekolah Berbasis Python &amp; SQLite
+      <div style="font-size: 12px; margin-top: 4px;">Soft Pastel Modern UI &bull; Single Registration &amp; Rekap Excel Otomatis</div>
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

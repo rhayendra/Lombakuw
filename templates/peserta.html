@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard &amp; Profil Pengguna — LombaKu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body data-page="peserta">
+
+  <!-- Top Navigation -->
+  <header class="masthead">
+    <div class="masthead-top">
+      <div class="container masthead-top-inner">
+        <span id="topAuthBanner">DASHBOARD PENGGUNA &amp; KARTU PESERTA &bull; LOMBAKU</span>
+        <span id="serverClockBanner">Memuat waktu server...</span>
+      </div>
+    </div>
+    <div class="container masthead-nav">
+      <a href="/" class="brand">
+        <div class="brand-crest-3d" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <path d="M9 7H23V13C23 16.866 19.866 20 16 20C12.134 20 9 16.866 9 13V7Z" fill="#FEF08A"/>
+            <path d="M16 20V25M11.5 25H20.5" stroke="#FDE047" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="brand-title">
+          <h1>LombaKu</h1>
+          <span>Dashboard &amp; Profil Pengguna</span>
+        </div>
+      </a>
+
+      <nav class="nav-actions">
+        <a href="/" class="btn btn-ghost">Home</a>
+        <a href="/daftar" class="btn btn-parchment">Daftar Event Lain</a>
+        <a href="/#jadwalSection" class="btn btn-ghost">Jadwal</a>
+        <div id="navParticipantZone" style="display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top: 32px; padding-bottom: 64px;">
+
+    <!-- View 1: Logged-In User Dashboard -->
+    <div id="pesertaDashboardView" style="display: none;">
+      <div id="welcomeAutoLoginBanner" class="alert-box alert-hunter" style="display: none; font-size: 14px; padding: 14px 18px; margin-bottom: 22px;">
+        <strong>Selamat! Pendaftaran Berhasil &amp; Anda Telah Otomatis Masuk.</strong><br>
+        Kartu Lomba Digital, ID User, dan Password Anda tersimpan aman di bawah ini. Silakan salin atau cetak kartu Anda kapan saja.
+      </div>
+
+      <!-- Greeting + Circular Progress Ring -->
+      <div class="peserta-greeting-row">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <div aria-hidden="true" style="flex-shrink:0;">
+            <svg width="68" height="68" viewBox="0 0 80 80" fill="none" style="filter:drop-shadow(0 8px 18px rgba(108,60,233,0.22));">
+              <defs>
+                <linearGradient id="orbAvatarBg" x1="0" y1="0" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#6C3CE9"/>
+                  <stop offset="1" stop-color="#26C6DA"/>
+                </linearGradient>
+              </defs>
+              <circle cx="40" cy="40" r="36" fill="url(#orbAvatarBg)"/>
+              <circle cx="32" cy="38" r="4.5" fill="#fff"/>
+              <circle cx="48" cy="38" r="4.5" fill="#fff"/>
+              <path d="M32 49C36 53 44 53 48 49" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="issue-tag" style="margin-bottom:4px;">Profil Pengguna Aktif</div>
+            <h2 style="font-size:clamp(24px, 3.2vw, 34px);font-weight:800;color:var(--text-dark);" id="dashHeaderTitle">Halo, Peserta 👋</h2>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+          <div class="progress-ring-box">
+            <svg class="progress-ring-svg" viewBox="0 0 68 68">
+              <defs>
+                <linearGradient id="ringCyanViolet" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#26C6DA"/>
+                  <stop offset="100%" stop-color="#6C3CE9"/>
+                </linearGradient>
+              </defs>
+              <circle class="progress-ring-bg" cx="34" cy="34" r="27"></circle>
+              <circle class="progress-ring-fg" id="dashProgressRingCircle" cx="34" cy="34" r="27" stroke-dasharray="169.65" stroke-dashoffset="113"></circle>
+            </svg>
+            <div>
+              <div style="font-size:18px;font-weight:800;color:var(--violet-deep);" id="dashProgressPct">35%</div>
+              <div style="font-size:11.5px;color:var(--text-muted);font-weight:700;" id="dashProgressText">Progres Lomba</div>
+            </div>
+          </div>
+
+          <div id="multiCardSwitcher" style="display: none; gap: 8px; flex-wrap: wrap; align-items: center;"></div>
+        </div>
+      </div>
+
+      <!-- User Profile, Event, Schedule & Status Strip -->
+      <div class="profile-open-metrics">
+        <div class="open-metric-item">
+          <div class="p-label">Nama Lengkap Siswa</div>
+          <div class="p-val" id="profNama">-</div>
+        </div>
+        <div class="open-metric-item">
+          <div class="p-label">Kelas</div>
+          <div class="p-val" id="profKelas">-</div>
+        </div>
+        <div class="open-metric-item">
+          <div class="p-label">Event Utama</div>
+          <div class="p-val" id="profEvent">-</div>
+        </div>
+        <div class="open-metric-item">
+          <div class="p-label">Cabang Perlombaan</div>
+          <div class="p-val" id="profComp">-</div>
+        </div>
+        <div class="open-metric-item">
+          <div class="p-label">Status Pendaftaran</div>
+          <div class="p-val" id="profRegStatus" style="color:#059669;">Terdaftar Resmi &#10003;</div>
+        </div>
+        <div class="open-metric-item">
+          <div class="p-label">Jadwal Kegiatan</div>
+          <div class="p-val" id="profSchedule" style="color:var(--violet-main);">-</div>
+        </div>
+        <div class="open-metric-item">
+          <div class="p-label">ID User &amp; Password</div>
+          <div class="p-val mono" id="profCreds" style="color: var(--pink-deep);">-</div>
+        </div>
+        <div class="open-metric-item" id="profGroupCard" style="display: none;">
+          <div class="p-label" style="color: var(--violet-deep);">Kelompok / Tim</div>
+          <div class="p-val" id="profGroupVal" style="font-size: 14px; font-weight: 700; color: var(--violet-main);">-</div>
+        </div>
+      </div>
+
+      <div class="reg-split" style="grid-template-columns: 0.92fr 1.18fr; gap: 32px;">
+        <!-- Left: Digital Participant Pass + Recommended Events -->
+        <div>
+          <div class="pass-card print-pass-target" id="dashPassCard">
+            <div class="pass-head">
+              <span class="pass-brand">KARTU PESERTA &bull; LOMBAKU</span>
+              <span class="pass-event-pill" id="dashPassEvent">EVENT</span>
+            </div>
+            <div class="pass-body-row">
+              <div>
+                <div class="pass-name" id="dashPassNama">-</div>
+                <div class="pass-sub" id="dashPassKelas">-</div>
+                <div class="pass-sub" style="color: #E0F7FA; margin-top: 6px; font-weight: 700;" id="dashPassComp">-</div>
+                <div class="pass-sub" style="color: #FEF08A; margin-top: 4px; font-size: 12px; font-weight: 700; display: none;" id="dashPassTeam">-</div>
+              </div>
+              <div class="pass-qr-box" id="dashPassQr"></div>
+            </div>
+            <div class="pass-creds">
+              <div>
+                <div class="pass-cred-lbl">ID User Peserta</div>
+                <div class="pass-cred-val" id="dashPassId">-</div>
+              </div>
+              <div>
+                <div class="pass-cred-lbl">Password Akun</div>
+                <div class="pass-cred-val" id="dashPassPw">-</div>
+              </div>
+            </div>
+            <div style="font-size: 11px; color: rgba(255,255,255,0.85); text-align: center; margin-top: 12px;" id="dashPassTime">-</div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
+            <button type="button" class="btn btn-hunter" style="flex: 1;" onclick="copyDashCard()">Salin ID &amp; Password</button>
+            <button type="button" class="btn btn-parchment" style="flex: 1;" onclick="window.print()">Cetak / Simpan PDF</button>
+            <button type="button" class="btn btn-danger" onclick="logoutParticipant()">Keluar Akun</button>
+          </div>
+
+          <!-- Event Lain yang Tersedia & Rekomendasi Lomba -->
+          <div style="margin-top: 28px; background: rgba(255,255,255,0.84); border-radius: 26px; padding: 22px; box-shadow: var(--shadow-soft);">
+            <div class="issue-tag" style="margin-bottom: 4px;">Eksplorasi</div>
+            <h4 style="font-size: 17px; font-weight: 800; color: var(--text-dark); margin-bottom: 10px;">
+              Event Tersedia &amp; Rekomendasi Lomba Lainnya
+            </h4>
+            <div id="dashRecommendedEvents" style="display: flex; flex-direction: column; gap: 10px;"></div>
+          </div>
+        </div>
+
+        <!-- Right: Bracket Progress & Juknis -->
+        <div class="detail-panel">
+          <div class="detail-header" style="padding-bottom: 14px; border-bottom: 1px solid var(--line-soft); margin-bottom: 20px;">
+            <div>
+              <span class="badge badge-open">PERKEMBANGAN LOMBA &amp; JUKNIS</span>
+              <h3 style="margin-top: 8px;" id="dashCompTitle">Perkembangan Perlombaan Anda</h3>
+            </div>
+          </div>
+          <div class="detail-body">
+            <div class="alert-box alert-hunter">
+              <strong>Posisi &amp; Status Pertandingan Anda:</strong><br>
+              <span id="dashBracketStatus">-</span>
+            </div>
+
+            <h4 style="font-size: 17px; font-weight: 800; color: var(--text-dark); margin: 22px 0 10px;">
+              Bagan Pertandingan Cabang Ini
+            </h4>
+            <div id="dashBracketTree" style="margin-bottom: 24px;"></div>
+
+            <h4 style="font-size: 17px; font-weight: 800; color: var(--text-dark); margin: 22px 0 10px;">
+              Persyaratan &amp; Juknis Lomba
+            </h4>
+            <div class="juknis-paper" id="dashJuknisBox" style="margin-bottom: 0;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View 2: Login Form When Not Logged In -->
+    <div id="pesertaLoginView" style="display: none; max-width: 500px; margin: 28px auto;">
+      <div class="detail-panel" style="text-align: center;">
+        <svg width="74" height="74" viewBox="0 0 84 84" fill="none" style="filter:drop-shadow(0 12px 24px rgba(108,60,233,0.22));margin-bottom:10px;">
+          <defs>
+            <linearGradient id="shieldGrad" x1="12" y1="8" x2="72" y2="76" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#6C3CE9"/>
+              <stop offset="1" stop-color="#26C6DA"/>
+            </linearGradient>
+          </defs>
+          <path d="M42 8L68 18V38C68 56 56.5 69.5 42 75C27.5 69.5 16 56 16 38V18L42 8Z" fill="url(#shieldGrad)"/>
+          <circle cx="42" cy="36" r="7" fill="#FEF08A"/>
+          <path d="M38 42H46L48 54H36L38 42Z" fill="#FEF08A"/>
+        </svg>
+        <div class="issue-tag" style="justify-content:center;">Portal Pengguna</div>
+        <h3 style="font-size:26px;font-weight:800;color:var(--text-dark);">Masuk ke Profil Peserta</h3>
+        <p style="font-size:13.5px;color:var(--text-body);margin-top:6px;margin-bottom:20px;">
+          Masukkan <strong>ID User</strong> dan <strong>Password</strong> dari Kartu Lomba Anda untuk memantau profil, jadwal, dan progres bagan.
+        </p>
+
+        <form onsubmit="submitPesertaPageLogin(event)" style="text-align: left;">
+          <div class="form-group">
+            <label>ID User Peserta</label>
+            <input type="text" id="pLoginId" class="form-control mono" placeholder="Contoh: LMB-BB-4821 / AYO-BB-4821" required>
+          </div>
+          <div class="form-group">
+            <label>Password Akun</label>
+            <input type="password" id="pLoginPw" class="form-control mono" placeholder="Masukkan password 6 karakter" required>
+          </div>
+          <button type="submit" class="btn btn-hunter" style="width: 100%; padding: 13px;">
+            Masuk ke Dashboard Pengguna &rarr;
+          </button>
+        </form>
+
+        <div style="margin-top: 22px; padding-top: 16px; border-top: 1px dashed var(--line-dashed); font-size: 13.5px; color: var(--text-body);">
+          Belum mendaftar lomba? <a href="/daftar" style="color: var(--violet-main); font-weight: 800; text-decoration: none;">Daftar Lomba Sekarang (Otomatis Login) &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Floating Rounded Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav" aria-label="Navigasi Utama">
+    <a href="/" class="m-nav-item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="/daftar" class="m-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="4"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span>Event</span>
+    </a>
+    <a href="/#jadwalSection" class="m-nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span>Jadwal</span>
+    </a>
+    <a href="/peserta" class="m-nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+      <span>Profil</span>
+    </a>
+  </nav>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <footer>
+    <div class="container">
+      <strong>LombaKu</strong> &mdash; Dashboard &amp; Profil Peserta Resmi
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
